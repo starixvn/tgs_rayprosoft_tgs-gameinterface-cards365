@@ -1,0 +1,7 @@
+﻿namespace Tgs.GameInterface.Cards365.Core.Extensions;
+
+public static class StringExtension
+{
+    public static string NoLongerThan(this string str, int chars)
+        => string.IsNullOrEmpty(str) || str.Length <= chars ? str : str[..chars];
+}

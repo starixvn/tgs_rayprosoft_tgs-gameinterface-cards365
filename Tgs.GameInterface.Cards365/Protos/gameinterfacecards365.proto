@@ -1,0 +1,150 @@
+﻿syntax = "proto3";
+
+import "phoenix/protobuf/decimal.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Tgs.GameInterface.Cards365.Protos";
+
+package gameinterfacecards365;
+
+// The greeting service definition.
+service GameInterfaceCards365 {
+  // Sends a greeting
+  rpc PlayerCreate (PlayerCreateRequest) returns (BaseReply);
+  rpc PlayerBalance (PlayerBalanceRequest) returns (PlayerBalanceReply);
+  rpc PlayerLogout (PlayerLogoutRequest) returns (BaseReply);
+  rpc FundIn (FundRequest) returns (FundReply);
+  rpc FundOut (FundRequest) returns (FundReply);
+  rpc FundStatus(FundStatusRequest) returns (BaseReply);
+  rpc GameUrl (GameUrlRequest) returns (GameUrlReply);
+  rpc GameRecordByBetTime (GameRecordByBetTimeRequest) returns (GameRecordReply);
+  rpc GameRecordByLastUpdate (GameRecordByLastUpdateRequest) returns (GameRecordReply);
+  rpc GameRecordByPayTime (GameRecordByPayTimeRequest) returns (GameRecordReply);
+  rpc CheckingService(CheckingServiceRequest) returns (CheckingServiceReply);
+}
+
+// The request message containing the user's name.
+message PlayerCreateRequest {
+	string api_url = 1;
+	string website = 2;
+	string cert = 3;
+	string extension1 = 4;
+	string player_code = 5;
+    int32 currency = 6;
+}
+
+message PlayerBalanceRequest {
+	string api_url = 1;
+	string website = 2;
+	string cert = 3;
+	string player_code = 4;
+}
+
+message PlayerLogoutRequest {
+	string api_url = 1;
+	string website = 2;
+	string cert = 3;
+	string extension1 = 4;
+	string player_code = 5;
+}
+
+message FundRequest {
+	string api_url = 1;
+	string website = 2;
+	string cert = 3;
+	string extension1 = 4;
+	string player_code = 5;
+	string transaction_id = 6;
+	phoenix.protobuf.DecimalValue amount = 7;
+}
+
+message FundStatusRequest {
+	string api_url = 1;
+	string website = 2;
+	string cert = 3;
+	string transaction_id = 4;
+}
+
+message GameUrlRequest {
+	string api_url = 1;
+	string website = 2;
+	string cert = 3;
+	string extension1 = 4;
+	string player_code = 5;
+    int32 currency = 6;
+	string language = 7;
+}
+
+message GameRecordByBetTimeRequest {
+	string api_url = 1;
+	string website = 2;
+	string cert = 3;
+	string extension1 = 4;
+	google.protobuf.Timestamp start_time = 5;
+	google.protobuf.Timestamp end_time = 6;
+}
+
+message GameRecordByLastUpdateRequest {
+	string api_url = 1;
+	string website = 2;
+	string cert = 3;
+	string extension1 = 4;
+	int64 lastupdatedate = 5;
+}
+
+message GameRecordByPayTimeRequest {
+	string api_url = 1;
+	string website = 2;
+	string cert = 3;
+	string extension1 = 4;
+	google.protobuf.Timestamp start_time = 5;
+	google.protobuf.Timestamp end_time = 6;
+}
+
+message CheckingServiceRequest{
+    string machine_name = 1;
+}
+
+// The response message containing the greetings.
+message BaseReply {
+	bool state = 1;
+}
+
+message PlayerBalanceReply {
+	bool is_player_exist = 1;
+	phoenix.protobuf.DecimalValue balance = 2;
+}
+
+message FundReply {
+	string transaction_id = 1;
+	string ts_code = 2;
+}
+
+message GameUrlReply{
+	string game_url = 1;
+}
+
+message GameRecordReply {
+	repeated GameRecordInfo items = 1;
+}
+
+message GameRecordInfo {
+	string external_round_id = 1;
+	string external_game_id = 2;
+    string player_code = 3;
+    bool is_closed = 4;
+    bool is_void = 5;
+    google.protobuf.Timestamp update_time = 6;
+    google.protobuf.Timestamp external_created_on = 7;
+    google.protobuf.Timestamp external_closed_on = 8;
+    phoenix.protobuf.DecimalValue bet = 9;
+    phoenix.protobuf.DecimalValue valid_bet = 10;
+	phoenix.protobuf.DecimalValue settle = 11;
+    phoenix.protobuf.DecimalValue winloss = 12;
+    phoenix.protobuf.DecimalValue commission = 13;
+    string additional_data = 14;
+}
+
+message CheckingServiceReply{
+    string machine_name = 1;
+}

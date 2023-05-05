@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Version>0.0.1</Version>
+		<Authors>Raypro</Authors>
+		<RootNamespace>Tgs.GameInterface.Cards365.Client</RootNamespace>
+		<PackageId>Tgs.GameInterface.Cards365.Client</PackageId>
+		<Title>Tgs.GameInterface.Cards365.Client</Title>
+		<PackageProjectUrl>https://gitlab.com/rayprosoft/tgs-gameinterface-cards365</PackageProjectUrl>
+		<RepositoryUrl>https://gitlab.com/rayprosoft/tgs-gameinterface-cards365.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>Tgs GameInterface Cards365 Client</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.52.0" />
+		<PackageReference Include="Grpc.Net.ClientFactory" Version="2.52.0" />
+		<PackageReference Include="Grpc.Tools" Version="2.54.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="PhoenixToolkits.NuGet.BuildTools" Version="0.0.2" />
+		<PackageReference Include="PhoenixToolkits.Protobuf.ExtendTypes" Version="0.0.6" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Protobuf Include="..\Tgs.GameInterface.Cards365\Protos\gameinterfacecards365.proto">
+	    <Link>gameinterfacecards365.proto</Link>
+	  </Protobuf>
+	</ItemGroup>
+
+</Project>
