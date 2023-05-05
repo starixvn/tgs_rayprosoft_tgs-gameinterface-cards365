@@ -16,7 +16,7 @@ internal class GameRecordUtensil : IGameRecordUtensil
             ExternalClosedOn: source.PayTransTime,
             Bet: source.Bet,
             Validbet: source.Validbet,
-            Settle: source.Winloss + source.Validbet,
+            Settle: source.Status.Equals("Void", StringComparison.OrdinalIgnoreCase) ? 0.0m : source.Winloss + source.Validbet,
             Winloss: source.Winloss,
             Commission: source.Commission,
             AdditionalData: source.AdditionalData);

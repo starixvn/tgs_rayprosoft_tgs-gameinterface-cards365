@@ -117,4 +117,42 @@ public class GameRecordUtensilUnitTest
         Assert.Equal(4.85m, actual.Winloss);
         Assert.Equal(0.15m, actual.Commission);
     }
+
+    [Fact]
+    public void Status_Is_Void()
+    {
+        var transactionInfo = new TransactionInfo(
+            "87032f02ea3d11ed853f5254002237ea",
+            549,
+            "4ucmqplxb029",
+            "Void",
+            DateTimeOffset.Parse("2023-05-04T13:36:16.185+08:00"),
+            DateTimeOffset.Parse("2023-05-04T13:35:54.886+08:00"),
+            DateTimeOffset.Parse("2023-05-04T13:36:16.092+08:00"),
+            33.0m,
+            0.0m,
+            0.0m,
+            0.0m,
+            "{\"txId\":\"87032f02ea3d11ed853f5254002237ea\""
+            );
+
+        var utensil = new GameRecordUtensil();
+
+        var actual = utensil.TransactionConvertGameRecord(transactionInfo);
+
+        Assert.NotNull(actual);
+        Assert.Equal("87032f02ea3d11ed853f5254002237ea", actual.ExternalRoundId);
+        Assert.Equal("549", actual.ExternalGameId);
+        Assert.Equal("4ucmqplxb029", actual.PlayerCode);
+        Assert.True(actual.IsClosed);
+        Assert.True(actual.IsVoid);
+        Assert.Equal(DateTimeOffset.Parse("2023-05-04T13:36:16.185+08:00"), actual.UpdateTime);
+        Assert.Equal(DateTimeOffset.Parse("2023-05-04T13:35:54.886+08:00"), actual.ExternalCreatedOn);
+        Assert.Equal(DateTimeOffset.Parse("2023-05-04T13:36:16.092+08:00"), actual.ExternalClosedOn);
+        Assert.Equal(33.0m, actual.Bet);
+        Assert.Equal(0.0m, actual.Validbet);
+        Assert.Equal(0.0m, actual.Settle);
+        Assert.Equal(0.0m, actual.Winloss);
+        Assert.Equal(0.0m, actual.Commission);
+    }
 }
