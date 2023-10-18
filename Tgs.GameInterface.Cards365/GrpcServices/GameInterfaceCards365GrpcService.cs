@@ -223,6 +223,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                     reply.Items.Add(new GameWagerInfo
                     {
                         ExternalRoundId = gameWager.ExternalRoundId,
+                        ExternalWagerId = gameWager.ExternalWagerId,
                         ExternalGameId = gameWager.ExternalGameId,
                         PlayerCode = gameWager.PlayerCode,
                         IsClosed = gameWager.IsClosed,
@@ -271,6 +272,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                     reply.Items.Add(new GameWagerInfo
                     {
                         ExternalRoundId = gameWager.ExternalRoundId,
+                        ExternalWagerId = gameWager.ExternalWagerId,
                         ExternalGameId = gameWager.ExternalGameId,
                         PlayerCode = gameWager.PlayerCode,
                         IsClosed = gameWager.IsClosed,
