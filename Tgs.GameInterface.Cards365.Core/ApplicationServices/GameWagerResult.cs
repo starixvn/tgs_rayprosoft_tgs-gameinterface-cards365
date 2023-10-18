@@ -1,7 +1,8 @@
-﻿namespace Tgs.GameInterface.Cards365.ViewModels;
+﻿namespace Tgs.GameInterface.Cards365.Core.ApplicationServices;
 
-public record GameRecordInfoViewModel(
+public record GameWagerResult(
     string ExternalRoundId,
+    string ExternalWagerId,
     string ExternalGameId,
     string PlayerCode,
     bool IsClosed,

@@ -17,9 +17,9 @@ service GameInterfaceCards365 {
   rpc FundOut (FundRequest) returns (FundReply);
   rpc FundStatus(FundStatusRequest) returns (BaseReply);
   rpc GameUrl (GameUrlRequest) returns (GameUrlReply);
-  rpc GameRecordByBetTime (GameRecordByBetTimeRequest) returns (GameRecordReply);
-  rpc GameRecordByLastUpdate (GameRecordByLastUpdateRequest) returns (GameRecordReply);
-  rpc GameRecordByPayTime (GameRecordByPayTimeRequest) returns (GameRecordReply);
+  rpc GameWagerByBetTime (GameWagerByBetTimeRequest) returns (GameWagerReply);
+  rpc GameWagerByLastUpdate (GameWagerByLastUpdateRequest) returns (GameWagerReply);
+  rpc GameWagerByPayTime (GameWagerByPayTimeRequest) returns (GameWagerReply);
   rpc CheckingService(CheckingServiceRequest) returns (CheckingServiceReply);
 }
 
@@ -75,7 +75,7 @@ message GameUrlRequest {
 	string language = 7;
 }
 
-message GameRecordByBetTimeRequest {
+message GameWagerByBetTimeRequest {
 	string api_url = 1;
 	string website = 2;
 	string cert = 3;
@@ -84,7 +84,7 @@ message GameRecordByBetTimeRequest {
 	google.protobuf.Timestamp end_time = 6;
 }
 
-message GameRecordByLastUpdateRequest {
+message GameWagerByLastUpdateRequest {
 	string api_url = 1;
 	string website = 2;
 	string cert = 3;
@@ -92,7 +92,7 @@ message GameRecordByLastUpdateRequest {
 	int64 lastupdatedate = 5;
 }
 
-message GameRecordByPayTimeRequest {
+message GameWagerByPayTimeRequest {
 	string api_url = 1;
 	string website = 2;
 	string cert = 3;
@@ -117,32 +117,33 @@ message PlayerBalanceReply {
 
 message FundReply {
 	string transaction_id = 1;
-	string ts_code = 2;
+	string resp = 2;
 }
 
 message GameUrlReply{
 	string game_url = 1;
 }
 
-message GameRecordReply {
-	repeated GameRecordInfo items = 1;
+message GameWagerReply {
+	repeated GameWagerInfo items = 1;
 }
 
-message GameRecordInfo {
+message GameWagerInfo {
 	string external_round_id = 1;
-	string external_game_id = 2;
-    string player_code = 3;
-    bool is_closed = 4;
-    bool is_void = 5;
-    google.protobuf.Timestamp update_time = 6;
-    google.protobuf.Timestamp external_created_on = 7;
-    google.protobuf.Timestamp external_closed_on = 8;
-    phoenix.protobuf.DecimalValue bet = 9;
-    phoenix.protobuf.DecimalValue valid_bet = 10;
-	phoenix.protobuf.DecimalValue settle = 11;
-    phoenix.protobuf.DecimalValue winloss = 12;
-    phoenix.protobuf.DecimalValue commission = 13;
-    string additional_data = 14;
+	string external_wager_id = 2;
+	string external_game_id = 3;
+    string player_code = 4;
+    bool is_closed = 5;
+    bool is_void = 6;
+    google.protobuf.Timestamp update_time = 7;
+    google.protobuf.Timestamp external_created_on = 8;
+    google.protobuf.Timestamp external_closed_on = 9;
+    phoenix.protobuf.DecimalValue bet = 10;
+    phoenix.protobuf.DecimalValue valid_bet = 11;
+	phoenix.protobuf.DecimalValue settle = 12;
+    phoenix.protobuf.DecimalValue winloss = 13;
+    phoenix.protobuf.DecimalValue commission = 14;
+    string additional_data = 15;
 }
 
 message CheckingServiceReply{

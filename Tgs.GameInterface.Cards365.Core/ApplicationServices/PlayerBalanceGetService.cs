@@ -13,13 +13,12 @@ internal class PlayerBalanceGetService : IGetService<PlayerBalanceQuery, PlayerB
 
     public async ValueTask<PlayerBalanceResult> GetAsync(PlayerBalanceQuery query, CancellationToken cancellationToken = default)
     {
-        var result = await _client
-            .GetBalanceAsync(
-                apiUrl: query.ApiUrl,
-                website: query.Website,
-                cert: query.Cert,
-                user: query.PlayerCode,
-                cancellationToken: cancellationToken)
+        var result = await _client.GetBalanceAsync(
+            apiUrl: query.ApiUrl,
+            website: query.Website,
+            cert: query.Cert,
+            user: query.PlayerCode,
+            cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         return new PlayerBalanceResult(

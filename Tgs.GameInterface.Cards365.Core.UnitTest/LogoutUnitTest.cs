@@ -1,4 +1,7 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Mime;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging.Abstractions;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.Cards365.Core.Exceptions;
@@ -23,13 +26,16 @@ public class LogoutUnitTest
             { "extension1",extension1}
         };
 
-        var content = "{\"status\":\"0\"}";
+        var response = new JsonObject
+        {
+            ["status"] = "0"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/logout")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -64,13 +70,16 @@ public class LogoutUnitTest
             { "extension1",extension1}
         };
 
-        var content = "{\"status\":\"1\"}";
+        var response = new JsonObject
+        {
+            ["status"] = "1"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/logout")
                 .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+                .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString(), mediaType: MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json)));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -85,7 +94,6 @@ public class LogoutUnitTest
                website: website,
                cert: cert,
                extension1: extension1,
-               user: user)
-           .ConfigureAwait(false);
+               user: user);
     }
 }

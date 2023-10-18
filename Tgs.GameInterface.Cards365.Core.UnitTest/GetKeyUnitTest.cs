@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging.Abstractions;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.Cards365.Core.Exceptions;
@@ -27,13 +28,16 @@ public class GetKeyUnitTest
             { "currency",currency.ToString()}
         };
 
-        var content = "{\"status\":\"1001\"}";
+        var response = new JsonObject
+        {
+            ["status"] = "1001"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getKey")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -42,8 +46,8 @@ public class GetKeyUnitTest
             fakeLog,
             fakeHttpClient);
 
-        _ = await Assert.ThrowsAsync<GameInterfaceException>(() => client
-            .GetKeyAsync(
+        _ = await Assert.ThrowsAsync<GameInterfaceException>(
+            () => client.GetKeyAsync(
                 apiUrl: apiUrl,
                 website: website,
                 cert: cert,
@@ -74,13 +78,17 @@ public class GetKeyUnitTest
             { "currency",currency.ToString()}
         };
 
-        var content = "{\"status\":\"1\",\"key\":\"VzFob3BnV3I2Z3NLRHUweis1ekVEM1NvSUd1TGl6dlFicmU3cHo0T3pUYkgzeGlnTDdFYzAwTEtackk5dy9Mbg==\"}";
+        var response = new JsonObject
+        {
+            ["status"] = "1",
+            ["key"] = "VzFob3BnV3I2Z3NLRHUweis1ekVEM1NvSUd1TGl6dlFicmU3cHo0T3pUYkgzeGlnTDdFYzAwTEtackk5dy9Mbg=="
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getKey")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -89,16 +97,14 @@ public class GetKeyUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetKeyAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                extension1: extension1,
-                user: user,
-                userName: userName,
-                currency: currency)
-            .ConfigureAwait(false);
+        var actual = await client.GetKeyAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            extension1: extension1,
+            user: user,
+            userName: userName,
+            currency: currency);
 
         Assert.NotNull(actual);
         Assert.Equal("VzFob3BnV3I2Z3NLRHUweis1ekVEM1NvSUd1TGl6dlFicmU3cHo0T3pUYkgzeGlnTDdFYzAwTEtackk5dy9Mbg==", actual);

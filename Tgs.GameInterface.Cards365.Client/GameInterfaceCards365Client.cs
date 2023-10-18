@@ -13,9 +13,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async ValueTask<string> CheckingServiceAsync(
-        string machineName,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<string> CheckingServiceAsync(string machineName, CancellationToken cancellationToken = default)
     {
         var request = new CheckingServiceRequest
         {
@@ -31,15 +29,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
         return reply.MachineName;
     }
 
-    public async ValueTask<FundReply> FundInAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        string playerCode,
-        string transactionId,
-        decimal amount,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<FundReply> FundInAsync(Uri apiUrl, string website, string cert, string extension1, string playerCode, string transactionId, decimal amount, CancellationToken cancellationToken = default)
     {
         var request = new FundRequest
         {
@@ -52,22 +42,13 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             Amount = amount
         };
 
-        return await _client
-            .FundInAsync(
-                request: request,
-                cancellationToken: cancellationToken)
+        return await _client.FundInAsync(
+            request: request,
+            cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
-    public async ValueTask<FundReply> FundOutAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        string playerCode,
-        string transactionId,
-        decimal amount,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<FundReply> FundOutAsync(Uri apiUrl, string website, string cert, string extension1, string playerCode, string transactionId, decimal amount, CancellationToken cancellationToken = default)
     {
         var request = new FundRequest
         {
@@ -80,19 +61,13 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             Amount = amount
         };
 
-        return await _client
-            .FundOutAsync(
-                request: request,
-                cancellationToken: cancellationToken)
+        return await _client.FundOutAsync(
+            request: request,
+            cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
-    public async ValueTask<bool> FundStatusAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string transactionId,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<bool> FundStatusAsync(Uri apiUrl, string website, string cert, string transactionId, CancellationToken cancellationToken = default)
     {
         var request = new FundStatusRequest
         {
@@ -102,139 +77,15 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             TransactionId = transactionId
         };
 
-        var reply = await _client
-            .FundStatusAsync(
-                request: request,
-                cancellationToken: cancellationToken)
+        var reply = await _client.FundStatusAsync(
+            request: request,
+            cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         return reply.State;
     }
 
-    public async IAsyncEnumerable<GameRecordInfo> GameRecordByBetTimeAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        DateTimeOffset startTime,
-        DateTimeOffset endTime,
-       [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var request = new GameRecordByBetTimeRequest
-        {
-            ApiUrl = apiUrl.ToString(),
-            Website = website,
-            Cert = cert,
-            Extension1 = extension1,
-            StartTime = startTime.ToTimestamp(),
-            EndTime = endTime.ToTimestamp()
-        };
-
-        var reply = await _client
-            .GameRecordByBetTimeAsync(
-                request: request,
-                cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
-
-        var gameRecords = reply.Items
-            ?? Enumerable.Empty<GameRecordInfo>();
-
-        if (!gameRecords.Any())
-        {
-            yield break;
-        }
-
-        foreach (var gameRecord in gameRecords)
-        {
-            yield return gameRecord;
-        }
-    }
-
-    public async IAsyncEnumerable<GameRecordInfo> GameRecordByLastUpdateAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        long lastupdatedate,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var request = new GameRecordByLastUpdateRequest
-        {
-            ApiUrl = apiUrl.ToString(),
-            Website = website,
-            Cert = cert,
-            Extension1 = extension1,
-            Lastupdatedate = lastupdatedate
-        };
-
-        var reply = await _client
-            .GameRecordByLastUpdateAsync(
-                request: request,
-                cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
-
-        var gameRecords = reply.Items
-            ?? Enumerable.Empty<GameRecordInfo>();
-
-        if (!gameRecords.Any())
-        {
-            yield break;
-        }
-
-        foreach (var gameRecord in gameRecords)
-        {
-            yield return gameRecord;
-        }
-    }
-
-    public async IAsyncEnumerable<GameRecordInfo> GameRecordByPayTimeAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        DateTimeOffset startTime,
-        DateTimeOffset endTime,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var request = new GameRecordByPayTimeRequest
-        {
-            ApiUrl = apiUrl.ToString(),
-            Website = website,
-            Cert = cert,
-            Extension1 = extension1,
-            StartTime = startTime.ToTimestamp(),
-            EndTime = endTime.ToTimestamp()
-        };
-
-        var reply = await _client
-            .GameRecordByPayTimeAsync(
-                request: request,
-                cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
-
-        var gameRecords = reply.Items
-            ?? Enumerable.Empty<GameRecordInfo>();
-
-        if (!gameRecords.Any())
-        {
-            yield break;
-        }
-
-        foreach (var gameRecord in gameRecords)
-        {
-            yield return gameRecord;
-        }
-    }
-
-    public async ValueTask<string> GameUrlAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        string playerCode,
-        int currency,
-        string language,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<string> GameUrlAsync(Uri apiUrl, string website, string cert, string extension1, string playerCode, int currency, string language, CancellationToken cancellationToken = default)
     {
         var request = new GameUrlRequest
         {
@@ -256,12 +107,99 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
         return reply.GameUrl;
     }
 
-    public async ValueTask<PlayerBalanceReply> PlayerBalanceAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string playerCode,
-        CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<GameWagerInfo> GameWagerByBetTimeAsync(Uri apiUrl, string website, string cert, string extension1, DateTimeOffset startTime, DateTimeOffset endTime, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var request = new GameWagerByBetTimeRequest
+        {
+            ApiUrl = apiUrl.ToString(),
+            Website = website,
+            Cert = cert,
+            Extension1 = extension1,
+            StartTime = startTime.ToTimestamp(),
+            EndTime = endTime.ToTimestamp()
+        };
+
+        var reply = await _client.GameWagerByBetTimeAsync(
+            request: request,
+            cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        var gameWagers = reply.Items
+            ?? Enumerable.Empty<GameWagerInfo>();
+
+        if (!gameWagers.Any())
+        {
+            yield break;
+        }
+
+        foreach (var gameWager in gameWagers)
+        {
+            yield return gameWager;
+        }
+    }
+
+    public async IAsyncEnumerable<GameWagerInfo> GameWagerByLastUpdateAsync(Uri apiUrl, string website, string cert, string extension1, long lastupdatedate, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var request = new GameWagerByLastUpdateRequest
+        {
+            ApiUrl = apiUrl.ToString(),
+            Website = website,
+            Cert = cert,
+            Extension1 = extension1,
+            Lastupdatedate = lastupdatedate
+        };
+
+        var reply = await _client.GameWagerByLastUpdateAsync(
+            request: request,
+            cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        var gameWagers = reply.Items
+            ?? Enumerable.Empty<GameWagerInfo>();
+
+        if (!gameWagers.Any())
+        {
+            yield break;
+        }
+
+        foreach (var gameWager in gameWagers)
+        {
+            yield return gameWager;
+        }
+    }
+
+    public async IAsyncEnumerable<GameWagerInfo> GameWagerByPayTimeAsync(Uri apiUrl, string website, string cert, string extension1, DateTimeOffset startTime, DateTimeOffset endTime, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var request = new GameWagerByPayTimeRequest
+        {
+            ApiUrl = apiUrl.ToString(),
+            Website = website,
+            Cert = cert,
+            Extension1 = extension1,
+            StartTime = startTime.ToTimestamp(),
+            EndTime = endTime.ToTimestamp()
+        };
+
+        var reply = await _client.GameWagerByPayTimeAsync(
+            request: request,
+            cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+
+        var gameWagers = reply.Items
+            ?? Enumerable.Empty<GameWagerInfo>();
+
+        if (!gameWagers.Any())
+        {
+            yield break;
+        }
+
+        foreach (var gameWager in gameWagers)
+        {
+            yield return gameWager;
+        }
+    }
+
+    public async ValueTask<PlayerBalanceReply> PlayerBalanceAsync(Uri apiUrl, string website, string cert, string playerCode, CancellationToken cancellationToken = default)
     {
         var request = new PlayerBalanceRequest
         {
@@ -278,14 +216,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             .ConfigureAwait(false);
     }
 
-    public async ValueTask PlayerCreateAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        string playerCode,
-        int currency,
-        CancellationToken cancellationToken = default)
+    public async ValueTask PlayerCreateAsync(Uri apiUrl, string website, string cert, string extension1, string playerCode, int currency, CancellationToken cancellationToken = default)
     {
         var request = new PlayerCreateRequest
         {
@@ -304,13 +235,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
            .ConfigureAwait(false);
     }
 
-    public async ValueTask PlayerLogout(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        string playerCode,
-        CancellationToken cancellationToken = default)
+    public async ValueTask PlayerLogout(Uri apiUrl, string website, string cert, string extension1, string playerCode, CancellationToken cancellationToken = default)
     {
         var request = new PlayerLogoutRequest
         {

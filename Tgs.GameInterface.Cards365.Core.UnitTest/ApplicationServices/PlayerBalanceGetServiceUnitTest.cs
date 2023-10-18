@@ -17,25 +17,20 @@ public class PlayerBalanceGetServiceUnitTest
             Cert: "40D237D0A995DFEAE0590F99552D3F6F",
             PlayerCode: "4ucmqplxb029");
 
-        var result = new BalanceResult(
+        var result = new BalanceResp(
             IsPlayerExist: true,
             Balance: 0.0m);
-        _ = fakeGameApiClient
-             .GetBalanceAsync(
-                 apiUrl: Arg.Is(query.ApiUrl),
-                 website: Arg.Is(query.Website),
-                 cert: Arg.Is(query.Cert),
-                 user: Arg.Is(query.PlayerCode),
-                 cancellationToken: Arg.Any<CancellationToken>())
-             .Returns(result);
+        _ = fakeGameApiClient.GetBalanceAsync(
+            apiUrl: Arg.Is(query.ApiUrl),
+            website: Arg.Is(query.Website),
+            cert: Arg.Is(query.Cert),
+            user: Arg.Is(query.PlayerCode),
+            cancellationToken: Arg.Any<CancellationToken>())
+            .Returns(result);
 
-        var client = new PlayerBalanceGetService(
-            fakeGameApiClient);
+        var service = new PlayerBalanceGetService(fakeGameApiClient);
 
-        var actual = await client
-            .GetAsync(
-               query)
-           .ConfigureAwait(false);
+        var actual = await service.GetAsync(query);
 
         Assert.NotNull(actual);
         Assert.True(actual.IsPlayerExist);

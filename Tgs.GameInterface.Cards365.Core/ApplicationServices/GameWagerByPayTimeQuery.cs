@@ -1,6 +1,6 @@
 ﻿namespace Tgs.GameInterface.Cards365.Core.ApplicationServices;
 
-public record GameRecordByPayTimeQuery(
+public record GameWagerByPayTimeQuery(
     Uri ApiUrl,
     string Website,
     string Cert,

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging.Abstractions;
 using RichardSzalay.MockHttp;
 
@@ -20,13 +21,17 @@ public class GetBalanceOperationLogUnitTest
             { "ts_code",ts_code}
         };
 
-        var content = "{\"status\":\"1\",\"result\":[]}";
+        var response = new JsonObject
+        {
+            ["status"] = "1",
+            ["result"] = new JsonArray()
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getBalanceOperationLog")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -35,13 +40,11 @@ public class GetBalanceOperationLogUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetBalanceOperationLogAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                ts_code: ts_code)
-            .ConfigureAwait(false);
+        var actual = await client.GetBalanceOperationLogAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            ts_code: ts_code);
 
         Assert.False(actual);
     }
@@ -60,13 +63,27 @@ public class GetBalanceOperationLogUnitTest
             { "ts_code",ts_code}
         };
 
-        var content = "{\"status\":\"1\",\"result\":[{\"tscode\":\"1683106362\",\"id\":\"4ucmqplxb029\",\"balance\":\"1.0\",\"createdate\":\"03/05/2023 17:33:05\",\"exntesion1\":\"cardp101\"}]}";
+        var response = new JsonObject
+        {
+            ["status"] = "1",
+            ["result"] = new JsonArray
+            {
+                new JsonObject
+                {
+                    ["tscode"]="1683106362",
+                    ["id"]= "4ucmqplxb029",
+                    ["balance"]= "1.0",
+                    ["createdate"]= "03/05/2023 17:33:05",
+                    ["exntesion1"]= "cardp101"
+                }
+            }
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getBalanceOperationLog")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -75,13 +92,11 @@ public class GetBalanceOperationLogUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetBalanceOperationLogAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                ts_code: ts_code)
-            .ConfigureAwait(false);
+        var actual = await client.GetBalanceOperationLogAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            ts_code: ts_code);
 
         Assert.True(actual);
     }

@@ -18,24 +18,20 @@ public class PlayerCreateCommandServiceUnitTest
             PlayerCode: "4ucmqplxb029",
             Currency: 3);
 
-        var client = new PlayerCreateCommandService(
-            fakeGameApiClient);
-        await client
-            .ExecuteAsync(
-                query)
-            .ConfigureAwait(false);
+        var service = new PlayerCreateCommandService(fakeGameApiClient);
+
+        await service.ExecuteAsync(query);
 
         _ = await fakeGameApiClient
             .Received(1)
             .GetKeyAsync(
-                apiUrl: Arg.Is(query.ApiUrl),
-                website: Arg.Is(query.Website),
-                cert: Arg.Is(query.Cert),
-                extension1: Arg.Is(query.Extension1),
-                user: Arg.Is(query.PlayerCode),
-                userName: Arg.Is(query.PlayerCode),
-                currency: Arg.Is(query.Currency),
-                cancellationToken: Arg.Any<CancellationToken>())
-            .ConfigureAwait(false);
+            apiUrl: Arg.Is(query.ApiUrl),
+            website: Arg.Is(query.Website),
+            cert: Arg.Is(query.Cert),
+            extension1: Arg.Is(query.Extension1),
+            user: Arg.Is(query.PlayerCode),
+            userName: Arg.Is(query.PlayerCode),
+            currency: Arg.Is(query.Currency),
+            cancellationToken: Arg.Any<CancellationToken>());
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging.Abstractions;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.Cards365.Core.Models;
@@ -20,13 +21,28 @@ public class GetBalancesUnitTest
             { "alluser","1"}
         };
 
-        var content = "{\"status\":\"1\",\"results\":[{\"user\":\"4ucmqplxb029\",\"currency\":\"3\",\"extension1\":\"cardp101\",\"balance\":\"100.0\"}],\"count\":\"1\",\"querytime\":\"03/05/2023 17:28:20\"}";
+        var response = new JsonObject
+        {
+            ["status"] = "1",
+            ["results"] = new JsonArray
+            {
+                new JsonObject
+                {
+                    ["id"]= "4ucmqplxb029",
+                    ["currency"]= "3",
+                    ["exntesion1"]= "cardp101",
+                    ["balance"]= "100.0"
+                }
+            },
+            ["count"] = "1",
+            ["querytime"] = "03/05/2023 17:28:20"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getBalance")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -35,13 +51,11 @@ public class GetBalancesUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetBalancesAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert)
+        var actual = await client.GetBalancesAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<BalanceInfo>();
 
         Assert.NotNull(actual);
@@ -61,13 +75,28 @@ public class GetBalancesUnitTest
             { "alluser","1"}
         };
 
-        var content = "{\"status\":\"1\",\"results\":[{\"user\":\"4ucmqplxb029\",\"currency\":\"3\",\"extension1\":\"cardp101\",\"balance\":\"0.0\"}],\"count\":\"1\",\"querytime\":\"03/05/2023 17:28:20\"}";
+        var response = new JsonObject
+        {
+            ["status"] = "1",
+            ["results"] = new JsonArray
+            {
+                new JsonObject
+                {
+                    ["id"]= "4ucmqplxb029",
+                    ["currency"]= "3",
+                    ["exntesion1"]= "cardp101",
+                    ["balance"]= "0.0"
+                }
+            },
+            ["count"] = "1",
+            ["querytime"] = "03/05/2023 17:28:20"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getBalance")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -76,13 +105,11 @@ public class GetBalancesUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetBalancesAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert)
+        var actual = await client.GetBalancesAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<BalanceInfo>();
 
         Assert.NotNull(actual);

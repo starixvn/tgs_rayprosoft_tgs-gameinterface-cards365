@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging.Abstractions;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.Cards365.Core.Models;
@@ -27,17 +27,17 @@ public class GetTransactionsByPayTimeUnitTest
             { "et",endTime.ToUnixTimeMilliseconds().ToString()}
         };
 
-        var content = JsonSerializer.Serialize(new
+        var response = new JsonObject
         {
-            status = "1003",
-            desc = "no data"
-        });
+            ["status"] = "1003",
+            ["desc"] = "no data"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getTransactionsByPayTime")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -46,16 +46,14 @@ public class GetTransactionsByPayTimeUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetTransactionsByPayTimeAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                extension1: extension1,
-                startTime: startTime,
-                endTime: endTime)
+        var actual = await client.GetTransactionsByPayTimeAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            extension1: extension1,
+            startTime: startTime,
+            endTime: endTime)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<TransactionInfo>();
 
         Assert.NotNull(actual);
@@ -81,45 +79,46 @@ public class GetTransactionsByPayTimeUnitTest
             { "et",endTime.ToUnixTimeMilliseconds().ToString()}
         };
 
-        var content = JsonSerializer.Serialize(new
+        var response = new JsonObject
         {
-            status = "1",
-            count = 1,
-            transactions = new[] {
-               new {
-                    txId="17f24f4aea4611ed853f5254002237ea",
-                    gameNumber= "549-1683182212-585257-1-36",
-                    userId= "4ucmqplxb029",
-                    extension1= "cardp101",
-                    status= "Pay",
-                    tiles= "{x=[d3, d8, b8], z=[d11, d4]}",
-                    gameId = 549,
-                    chair= 0,
-                    playId= 1,
-                    commission= 0.0,
-                    banker= 1,
-                    profit= -9.0,
-                    validbet=9.0,
-                    bonus= 0.0,
-                    reward= 0.0,
-                    outMoney= 0.0,
-                    currency= "CNY",
-                    updateTime="05/04/2023 14:37:36.756",
-                    createTime="05/04/2023 14:37:15.978",
-                    betTransTime= "05/04/2023 14:37:15.905",
-                    payTransTime= "05/04/2023 14:37:36.661",
-                    betAmount= 186.07,
-                    realBetAmount= 9.0,
-                    payAmount=177.07,
-                    realPayAmount= 0.0 }
+            ["status"] = "1",
+            ["count"] = 1,
+            ["transactions"] = new JsonArray {
+                new JsonObject{
+                    ["txId"] = "17f24f4aea4611ed853f5254002237ea",
+                    ["gameNumber"] = "549-1683182212-585257-1-36",
+                    ["userId"] = "4ucmqplxb029",
+                    ["extension1"] = "cardp101",
+                    ["status"] = "Pay",
+                    ["tiles"] = "{x=[d3, d8, b8], z=[d11, d4]}",
+                    ["gameId"] = 549,
+                    ["chair"] = 0,
+                    ["playId"] = 1,
+                    ["commission"] = 0.0,
+                    ["banker"] = 1,
+                    ["profit"] = -9.0,
+                    ["validbet"] = 9.0,
+                    ["bonus"] = 0.0,
+                    ["reward"] = 0.0,
+                    ["outMoney"] = 0.0,
+                    ["currency"] = "CNY",
+                    ["updateTime"] = "05/04/2023 14:37:36.756",
+                    ["createTime"] = "05/04/2023 14:37:15.978",
+                    ["betTransTime"] = "05/04/2023 14:37:15.905",
+                    ["payTransTime"]= "05/04/2023 14:37:36.661",
+                    ["betAmount"] = 186.07,
+                    ["realBetAmount"] = 9.0,
+                    ["payAmount"] = 177.07,
+                    ["realPayAmount"] = 0.0
+                }
             }
-        });
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getTransactionsByPayTime")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -128,16 +127,14 @@ public class GetTransactionsByPayTimeUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetTransactionsByPayTimeAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                extension1: extension1,
-                startTime: startTime,
-                endTime: endTime)
+        var actual = await client.GetTransactionsByPayTimeAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            extension1: extension1,
+            startTime: startTime,
+            endTime: endTime)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<TransactionInfo>();
 
         Assert.NotNull(actual);

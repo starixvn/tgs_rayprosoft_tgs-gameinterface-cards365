@@ -11,10 +11,10 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
         private readonly IGetService<FundInQuery, FundResult> _fundInService;
         private readonly IGetService<FundOutQuery, FundResult> _fundOutService;
         private readonly IGetService<FundStatusQuery, bool> _fundStatusService;
-        private readonly IQueryService<GameRecordByBetTimeQuery, Core.Models.GameRecordInfo> _gameRecordByBetTimeService;
-        private readonly IQueryService<GameRecordByLastUpdateQuery, Core.Models.GameRecordInfo> _gameRecordByLastUpdateService;
-        private readonly IQueryService<GameRecordByPayTimeQuery, Core.Models.GameRecordInfo> _gameRecordByPayTimeService;
         private readonly IGetService<GameUrlQuery, string> _gameUrlService;
+        private readonly IQueryService<GameWagerByBetTimeQuery, GameWagerResult> _gameWagerByBetTimeService;
+        private readonly IQueryService<GameWagerByLastUpdateQuery, GameWagerResult> _gameWagerByLastUpdateService;
+        private readonly IQueryService<GameWagerByPayTimeQuery, GameWagerResult> _gameWagerByPayTimeService;
         private readonly ILogger<GameInterfaceCards365GrpcService> _logger;
         private readonly IGetService<PlayerBalanceQuery, PlayerBalanceResult> _playerBalanceService;
         private readonly ICommandService<PlayerCreateCommand> _playerCreateService;
@@ -25,9 +25,9 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
             IGetService<FundInQuery, FundResult> fundInService,
             IGetService<FundOutQuery, FundResult> fundOutService,
             IGetService<FundStatusQuery, bool> fundStatusService,
-            IQueryService<GameRecordByBetTimeQuery, Core.Models.GameRecordInfo> gameRecordByBetTimeService,
-            IQueryService<GameRecordByLastUpdateQuery, Core.Models.GameRecordInfo> gameRecordByLastUpdateService,
-            IQueryService<GameRecordByPayTimeQuery, Core.Models.GameRecordInfo> gameRecordByPayTimeService,
+            IQueryService<GameWagerByBetTimeQuery, GameWagerResult> gameWagerByBetTimeService,
+            IQueryService<GameWagerByLastUpdateQuery, GameWagerResult> gameWagerByLastUpdateService,
+            IQueryService<GameWagerByPayTimeQuery, GameWagerResult> gameWagerByPayTimeService,
             IGetService<GameUrlQuery, string> gameUrlService,
             IGetService<PlayerBalanceQuery, PlayerBalanceResult> playerBalanceService,
             ICommandService<PlayerCreateCommand> playerCreateService,
@@ -37,9 +37,9 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
             _fundInService = fundInService ?? throw new ArgumentNullException(nameof(fundInService));
             _fundOutService = fundOutService ?? throw new ArgumentNullException(nameof(fundOutService));
             _fundStatusService = fundStatusService ?? throw new ArgumentNullException(nameof(fundStatusService));
-            _gameRecordByBetTimeService = gameRecordByBetTimeService ?? throw new ArgumentNullException(nameof(gameRecordByBetTimeService));
-            _gameRecordByLastUpdateService = gameRecordByLastUpdateService ?? throw new ArgumentNullException(nameof(gameRecordByLastUpdateService));
-            _gameRecordByPayTimeService = gameRecordByPayTimeService ?? throw new ArgumentNullException(nameof(gameRecordByPayTimeService));
+            _gameWagerByBetTimeService = gameWagerByBetTimeService ?? throw new ArgumentNullException(nameof(gameWagerByBetTimeService));
+            _gameWagerByLastUpdateService = gameWagerByLastUpdateService ?? throw new ArgumentNullException(nameof(gameWagerByLastUpdateService));
+            _gameWagerByPayTimeService = gameWagerByPayTimeService ?? throw new ArgumentNullException(nameof(gameWagerByPayTimeService));
             _gameUrlService = gameUrlService ?? throw new ArgumentNullException(nameof(gameUrlService));
             _playerBalanceService = playerBalanceService ?? throw new ArgumentNullException(nameof(playerBalanceService));
             _playerCreateService = playerCreateService ?? throw new ArgumentNullException(nameof(playerCreateService));
@@ -76,7 +76,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
             return new FundReply
             {
                 TransactionId = result.TransactionId,
-                TsCode = result.TsCode
+                Resp = result.Resp
             };
         }
 
@@ -100,7 +100,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
             return new FundReply
             {
                 TransactionId = result.TransactionId,
-                TsCode = result.TsCode
+                Resp = result.Resp
             };
         }
 
@@ -124,149 +124,6 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
             };
         }
 
-        public override async Task<GameRecordReply> GameRecordByBetTime(GameRecordByBetTimeRequest request, ServerCallContext context)
-        {
-            var query = new GameRecordByBetTimeQuery(
-                ApiUrl: new(request.ApiUrl),
-                Website: request.Website,
-                Cert: request.Cert,
-                Extension1: request.Extension1,
-                StartTime: request.StartTime.ToDateTimeOffset(),
-                EndTime: request.EndTime.ToDateTimeOffset());
-
-            var gameRecords = await _gameRecordByBetTimeService
-                .QueryAsync(
-                    query: query,
-                    cancellationToken: context.CancellationToken)
-                .ToArrayAsync(
-                    cancellationToken: context.CancellationToken)
-                .ConfigureAwait(false)
-                ?? Enumerable.Empty<Core.Models.GameRecordInfo>();
-
-            var reply = new GameRecordReply();
-
-            if (gameRecords.Any())
-            {
-                foreach (var gameRecord in gameRecords)
-                {
-                    reply.Items.Add(new GameRecordInfo
-                    {
-                        ExternalRoundId = gameRecord.ExternalRoundId,
-                        ExternalGameId = gameRecord.ExternalGameId,
-                        PlayerCode = gameRecord.PlayerCode,
-                        IsClosed = gameRecord.IsClosed,
-                        IsVoid = gameRecord.IsVoid,
-                        UpdateTime = gameRecord.UpdateTime.ToTimestamp(),
-                        ExternalCreatedOn = gameRecord.ExternalCreatedOn.ToTimestamp(),
-                        ExternalClosedOn = gameRecord.ExternalClosedOn.ToTimestamp(),
-                        Bet = gameRecord.Bet,
-                        ValidBet = gameRecord.Validbet,
-                        Settle = gameRecord.Settle,
-                        Winloss = gameRecord.Winloss,
-                        Commission = gameRecord.Commission,
-                        AdditionalData = gameRecord.AdditionalData
-                    });
-                }
-            }
-
-            return reply;
-        }
-
-        public override async Task<GameRecordReply> GameRecordByLastUpdate(GameRecordByLastUpdateRequest request, ServerCallContext context)
-        {
-            var query = new GameRecordByLastUpdateQuery(
-                ApiUrl: new(request.ApiUrl),
-                Website: request.Website,
-                Cert: request.Cert,
-                Extension1: request.Extension1,
-                Lastupdatedate: request.Lastupdatedate);
-
-            var gameRecords = await _gameRecordByLastUpdateService
-                .QueryAsync(
-                    query: query,
-                    cancellationToken: context.CancellationToken)
-                .ToArrayAsync(
-                    cancellationToken: context.CancellationToken)
-                .ConfigureAwait(false)
-                ?? Enumerable.Empty<Core.Models.GameRecordInfo>();
-
-            var reply = new GameRecordReply();
-
-            if (gameRecords.Any())
-            {
-                foreach (var gameRecord in gameRecords)
-                {
-                    reply.Items.Add(new GameRecordInfo
-                    {
-                        ExternalRoundId = gameRecord.ExternalRoundId,
-                        ExternalGameId = gameRecord.ExternalGameId,
-                        PlayerCode = gameRecord.PlayerCode,
-                        IsClosed = gameRecord.IsClosed,
-                        IsVoid = gameRecord.IsVoid,
-                        UpdateTime = gameRecord.UpdateTime.ToTimestamp(),
-                        ExternalCreatedOn = gameRecord.ExternalCreatedOn.ToTimestamp(),
-                        ExternalClosedOn = gameRecord.ExternalClosedOn.ToTimestamp(),
-                        Bet = gameRecord.Bet,
-                        ValidBet = gameRecord.Validbet,
-                        Settle = gameRecord.Settle,
-                        Winloss = gameRecord.Winloss,
-                        Commission = gameRecord.Commission,
-                        AdditionalData = gameRecord.AdditionalData
-                    });
-                }
-            }
-
-            return reply;
-        }
-
-        public override async Task<GameRecordReply> GameRecordByPayTime(GameRecordByPayTimeRequest request, ServerCallContext context)
-        {
-            var query = new GameRecordByPayTimeQuery(
-                ApiUrl: new(request.ApiUrl),
-                Website: request.Website,
-                Cert: request.Cert,
-                Extension1: request.Extension1,
-                StartTime: request.StartTime.ToDateTimeOffset(),
-                EndTime: request.EndTime.ToDateTimeOffset());
-
-            var gameRecords = await _gameRecordByPayTimeService
-                .QueryAsync(
-                    query: query,
-                    cancellationToken: context.CancellationToken)
-                .ToArrayAsync(
-                    cancellationToken: context.CancellationToken)
-                .ConfigureAwait(false)
-                ?? Enumerable.Empty<Core.Models.GameRecordInfo>();
-
-            var reply = new GameRecordReply();
-
-            if (gameRecords.Any())
-            {
-                foreach (var gameRecord in gameRecords)
-                {
-                    reply.Items.Add(new GameRecordInfo
-                    {
-                        ExternalRoundId = gameRecord.ExternalRoundId,
-                        ExternalGameId = gameRecord.ExternalGameId,
-                        PlayerCode = gameRecord.PlayerCode,
-                        IsClosed = gameRecord.IsClosed,
-                        IsVoid = gameRecord.IsVoid,
-                        UpdateTime = gameRecord.UpdateTime.ToTimestamp(),
-                        ExternalCreatedOn = gameRecord.ExternalCreatedOn.ToTimestamp(),
-                        ExternalClosedOn = gameRecord.ExternalClosedOn.ToTimestamp(),
-                        Bet = gameRecord.Bet,
-                        ValidBet = gameRecord.Validbet,
-                        Settle = gameRecord.Settle,
-                        Winloss = gameRecord.Winloss,
-                        Commission = gameRecord.Commission,
-                        AdditionalData = gameRecord.AdditionalData
-                    });
-                }
-            }
-
-            return reply;
-        }
-
         public override async Task<GameUrlReply> GameUrl(GameUrlRequest request, ServerCallContext context)
         {
             var query = new GameUrlQuery(
@@ -288,6 +145,150 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
             {
                 GameUrl = result
             };
+        }
+
+        public override async Task<GameWagerReply> GameWagerByBetTime(GameWagerByBetTimeRequest request, ServerCallContext context)
+        {
+            var query = new GameWagerByBetTimeQuery(
+                ApiUrl: new(request.ApiUrl),
+                Website: request.Website,
+                Cert: request.Cert,
+                Extension1: request.Extension1,
+                StartTime: request.StartTime.ToDateTimeOffset(),
+                EndTime: request.EndTime.ToDateTimeOffset());
+
+            var gameWagers = await _gameWagerByBetTimeService
+                .QueryAsync(
+                    query: query,
+                    cancellationToken: context.CancellationToken)
+                .ToArrayAsync(
+                    cancellationToken: context.CancellationToken)
+                .ConfigureAwait(false)
+                ?? Enumerable.Empty<GameWagerResult>();
+
+            var reply = new GameWagerReply();
+
+            if (gameWagers.Any())
+            {
+                foreach (var gameWager in gameWagers)
+                {
+                    reply.Items.Add(new GameWagerInfo
+                    {
+                        ExternalRoundId = gameWager.ExternalRoundId,
+                        ExternalWagerId = gameWager.ExternalWagerId,
+                        ExternalGameId = gameWager.ExternalGameId,
+                        PlayerCode = gameWager.PlayerCode,
+                        IsClosed = gameWager.IsClosed,
+                        IsVoid = gameWager.IsVoid,
+                        UpdateTime = gameWager.UpdateTime.ToTimestamp(),
+                        ExternalCreatedOn = gameWager.ExternalCreatedOn.ToTimestamp(),
+                        ExternalClosedOn = gameWager.ExternalClosedOn.ToTimestamp(),
+                        Bet = gameWager.Bet,
+                        ValidBet = gameWager.Validbet,
+                        Settle = gameWager.Settle,
+                        Winloss = gameWager.Winloss,
+                        Commission = gameWager.Commission,
+                        AdditionalData = gameWager.AdditionalData
+                    });
+                }
+            }
+
+            return reply;
+        }
+
+        public override async Task<GameWagerReply> GameWagerByLastUpdate(GameWagerByLastUpdateRequest request, ServerCallContext context)
+        {
+            var query = new GameWagerByLastUpdateQuery(
+                ApiUrl: new(request.ApiUrl),
+                Website: request.Website,
+                Cert: request.Cert,
+                Extension1: request.Extension1,
+                Lastupdatedate: request.Lastupdatedate);
+
+            var gameWagers = await _gameWagerByLastUpdateService
+                .QueryAsync(
+                    query: query,
+                    cancellationToken: context.CancellationToken)
+                .ToArrayAsync(
+                    cancellationToken: context.CancellationToken)
+                .ConfigureAwait(false)
+                ?? Enumerable.Empty<GameWagerResult>();
+
+            var reply = new GameWagerReply();
+
+            if (gameWagers.Any())
+            {
+                foreach (var gameWager in gameWagers)
+                {
+                    reply.Items.Add(new GameWagerInfo
+                    {
+                        ExternalRoundId = gameWager.ExternalRoundId,
+                        ExternalGameId = gameWager.ExternalGameId,
+                        PlayerCode = gameWager.PlayerCode,
+                        IsClosed = gameWager.IsClosed,
+                        IsVoid = gameWager.IsVoid,
+                        UpdateTime = gameWager.UpdateTime.ToTimestamp(),
+                        ExternalCreatedOn = gameWager.ExternalCreatedOn.ToTimestamp(),
+                        ExternalClosedOn = gameWager.ExternalClosedOn.ToTimestamp(),
+                        Bet = gameWager.Bet,
+                        ValidBet = gameWager.Validbet,
+                        Settle = gameWager.Settle,
+                        Winloss = gameWager.Winloss,
+                        Commission = gameWager.Commission,
+                        AdditionalData = gameWager.AdditionalData
+                    });
+                }
+            }
+
+            return reply;
+        }
+
+        public override async Task<GameWagerReply> GameWagerByPayTime(GameWagerByPayTimeRequest request, ServerCallContext context)
+        {
+            var query = new GameWagerByPayTimeQuery(
+                ApiUrl: new(request.ApiUrl),
+                Website: request.Website,
+                Cert: request.Cert,
+                Extension1: request.Extension1,
+                StartTime: request.StartTime.ToDateTimeOffset(),
+                EndTime: request.EndTime.ToDateTimeOffset());
+
+            var gameWagers = await _gameWagerByPayTimeService
+                .QueryAsync(
+                    query: query,
+                    cancellationToken: context.CancellationToken)
+                .ToArrayAsync(
+                    cancellationToken: context.CancellationToken)
+                .ConfigureAwait(false)
+                ?? Enumerable.Empty<GameWagerResult>();
+
+            var reply = new GameWagerReply();
+
+            if (gameWagers.Any())
+            {
+                foreach (var gameWager in gameWagers)
+                {
+                    reply.Items.Add(new GameWagerInfo
+                    {
+                        ExternalRoundId = gameWager.ExternalRoundId,
+                        ExternalGameId = gameWager.ExternalGameId,
+                        PlayerCode = gameWager.PlayerCode,
+                        IsClosed = gameWager.IsClosed,
+                        IsVoid = gameWager.IsVoid,
+                        UpdateTime = gameWager.UpdateTime.ToTimestamp(),
+                        ExternalCreatedOn = gameWager.ExternalCreatedOn.ToTimestamp(),
+                        ExternalClosedOn = gameWager.ExternalClosedOn.ToTimestamp(),
+                        Bet = gameWager.Bet,
+                        ValidBet = gameWager.Validbet,
+                        Settle = gameWager.Settle,
+                        Winloss = gameWager.Winloss,
+                        Commission = gameWager.Commission,
+                        AdditionalData = gameWager.AdditionalData
+                    });
+                }
+            }
+
+            return reply;
         }
 
         public override async Task<PlayerBalanceReply> PlayerBalance(PlayerBalanceRequest request, ServerCallContext context)

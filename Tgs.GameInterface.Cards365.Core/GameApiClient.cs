@@ -22,15 +22,7 @@ internal class GameApiClient : IGameApiClient
         _client = client ?? throw new ArgumentNullException(nameof(client));
     }
 
-    public async ValueTask DepositAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        string user,
-        string ts_code,
-        decimal amount,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<DepositResp> DepositAsync(Uri apiUrl, string website, string cert, string extension1, string user, string ts_code, decimal amount, CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -49,18 +41,12 @@ internal class GameApiClient : IGameApiClient
                 logPrefix: "deposit",
                 cancellationToken: cancellationToken);
 
-        if (!jsond["status"]!.GetValue<string>().Equals("1", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new GameInterfaceException(jsond["status"]!.GetValue<string>());
-        }
+        return !jsond["status"]!.GetValue<string>().Equals("1", StringComparison.OrdinalIgnoreCase)
+            ? throw new GameInterfaceException(jsond["status"]!.GetValue<string>())
+            : new DepositResp(jsond.ToJsonString());
     }
 
-    public async ValueTask<BalanceResult> GetBalanceAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string user,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<BalanceResp> GetBalanceAsync(Uri apiUrl, string website, string cert, string user, CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -80,7 +66,7 @@ internal class GameApiClient : IGameApiClient
         if (!jsond["status"]!.GetValue<string>().Equals("1", StringComparison.OrdinalIgnoreCase))
         {
             return jsond["status"]!.GetValue<string>().Equals("1032", StringComparison.OrdinalIgnoreCase)
-                ? new BalanceResult(false, 0)
+                ? new BalanceResp(false, 0)
                 : throw new GameInterfaceException(jsond["status"]!.GetValue<string>());
         }
 
@@ -88,20 +74,15 @@ internal class GameApiClient : IGameApiClient
 
         if (!results.Any())
         {
-            return new BalanceResult(false, 0);
+            return new BalanceResp(false, 0);
         }
 
         var result = results.Single(x => x.User.Equals(user, StringComparison.OrdinalIgnoreCase));
 
-        return new BalanceResult(true, result.Balance);
+        return new BalanceResp(true, result.Balance);
     }
 
-    public async ValueTask<bool> GetBalanceOperationLogAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string ts_code,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<bool> GetBalanceOperationLogAsync(Uri apiUrl, string website, string cert, string ts_code, CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -122,11 +103,7 @@ internal class GameApiClient : IGameApiClient
             : jsond["result"]!.AsArray().Any();
     }
 
-    public async IAsyncEnumerable<BalanceInfo> GetBalancesAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<BalanceInfo> GetBalancesAsync(Uri apiUrl, string website, string cert, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -164,15 +141,7 @@ internal class GameApiClient : IGameApiClient
         }
     }
 
-    public async ValueTask<string> GetKeyAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        string user,
-        string userName,
-        int currency,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<string> GetKeyAsync(Uri apiUrl, string website, string cert, string extension1, string user, string userName, int currency, CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -196,14 +165,7 @@ internal class GameApiClient : IGameApiClient
             : jsond["key"]!.GetValue<string>();
     }
 
-    public async IAsyncEnumerable<TransactionInfo> GetTransactionsByBetTimeAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        DateTimeOffset startTime,
-        DateTimeOffset endTime,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<TransactionInfo> GetTransactionsByBetTimeAsync(Uri apiUrl, string website, string cert, string extension1, DateTimeOffset startTime, DateTimeOffset endTime, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -247,6 +209,7 @@ internal class GameApiClient : IGameApiClient
 
             yield return new TransactionInfo(
                 TxId: result["txId"]!.GetValue<string>(),
+                GameNumber: result["gameNumber"]!.GetValue<string>(),
                 GameId: result["gameId"]!.GetValue<int>(),
                 UserId: result["userId"]!.GetValue<string>(),
                 Status: result["status"]!.GetValue<string>(),
@@ -261,13 +224,7 @@ internal class GameApiClient : IGameApiClient
         }
     }
 
-    public async IAsyncEnumerable<TransactionInfo> GetTransactionsByLastUpdateDateAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        long lastupdatedate,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<TransactionInfo> GetTransactionsByLastUpdateDateAsync(Uri apiUrl, string website, string cert, string extension1, long lastupdatedate, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -310,6 +267,7 @@ internal class GameApiClient : IGameApiClient
 
             yield return new TransactionInfo(
                 TxId: result["txId"]!.GetValue<string>(),
+                GameNumber: result["gameNumber"]!.GetValue<string>(),
                 GameId: result["gameId"]!.GetValue<int>(),
                 UserId: result["userId"]!.GetValue<string>(),
                 Status: result["status"]!.GetValue<string>(),
@@ -324,14 +282,7 @@ internal class GameApiClient : IGameApiClient
         }
     }
 
-    public async IAsyncEnumerable<TransactionInfo> GetTransactionsByPayTimeAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        DateTimeOffset startTime,
-        DateTimeOffset endTime,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<TransactionInfo> GetTransactionsByPayTimeAsync(Uri apiUrl, string website, string cert, string extension1, DateTimeOffset startTime, DateTimeOffset endTime, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -375,6 +326,7 @@ internal class GameApiClient : IGameApiClient
 
             yield return new TransactionInfo(
                 TxId: result["txId"]!.GetValue<string>(),
+                GameNumber: result["gameNumber"]!.GetValue<string>(),
                 GameId: result["gameId"]!.GetValue<int>(),
                 UserId: result["userId"]!.GetValue<string>(),
                 Status: result["status"]!.GetValue<string>(),
@@ -389,13 +341,7 @@ internal class GameApiClient : IGameApiClient
         }
     }
 
-    public async ValueTask LogoutAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        string user,
-        CancellationToken cancellationToken = default)
+    public async ValueTask LogoutAsync(Uri apiUrl, string website, string cert, string extension1, string user, CancellationToken cancellationToken = default)
 
     {
         var parameters = new Dictionary<string, string>
@@ -419,15 +365,7 @@ internal class GameApiClient : IGameApiClient
         }
     }
 
-    public async ValueTask WithdrawAsync(
-        Uri apiUrl,
-        string website,
-        string cert,
-        string extension1,
-        string user,
-        string ts_code,
-        decimal amount,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<WithdrawResp> WithdrawAsync(Uri apiUrl, string website, string cert, string extension1, string user, string ts_code, decimal amount, CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
         {
@@ -447,17 +385,12 @@ internal class GameApiClient : IGameApiClient
                 logPrefix: "withdraw",
                 cancellationToken: cancellationToken);
 
-        if (!jsond["status"]!.GetValue<string>().Equals("1", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new GameInterfaceException(jsond["status"]!.GetValue<string>());
-        }
+        return !jsond["status"]!.GetValue<string>().Equals("1", StringComparison.OrdinalIgnoreCase)
+            ? throw new GameInterfaceException(jsond["status"]!.GetValue<string>())
+            : new WithdrawResp(jsond.ToJsonString());
     }
 
-    private async ValueTask<JsonNode> PostAsync(
-        Uri apiUrl,
-        IDictionary<string, string> parameters,
-        string logPrefix,
-        CancellationToken cancellationToken = default)
+    private async ValueTask<JsonNode> PostAsync(Uri apiUrl, IDictionary<string, string> parameters, string logPrefix, CancellationToken cancellationToken = default)
     {
         logPrefix = $"{nameof(GameApiClient)}.{logPrefix}".ToLower();
 

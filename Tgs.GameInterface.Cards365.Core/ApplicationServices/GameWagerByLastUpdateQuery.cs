@@ -1,9 +1,8 @@
 ﻿namespace Tgs.GameInterface.Cards365.Core.ApplicationServices;
 
-public record GameRecordByBetTimeQuery(
+public record GameWagerByLastUpdateQuery(
     Uri ApiUrl,
     string Website,
     string Cert,
     string Extension1,
-    DateTimeOffset StartTime,
-    DateTimeOffset EndTime);
+    long Lastupdatedate);

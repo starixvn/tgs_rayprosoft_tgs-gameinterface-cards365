@@ -12,8 +12,7 @@ internal class PlayerCreateCommandService : ICommandService<PlayerCreateCommand>
     }
 
     public async ValueTask ExecuteAsync(PlayerCreateCommand command, CancellationToken cancellationToken = default)
-        => _ = await _client
-        .GetKeyAsync(
+        => _ = await _client.GetKeyAsync(
             apiUrl: command.ApiUrl,
             website: command.Website,
             cert: command.Cert,

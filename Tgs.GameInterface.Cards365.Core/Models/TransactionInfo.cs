@@ -2,6 +2,7 @@
 
 public record TransactionInfo(
     string TxId,
+    string GameNumber,
     int GameId,
     string UserId,
     string Status,

@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging.Abstractions;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.Cards365.Core.Exceptions;
@@ -15,7 +16,7 @@ public class WithdrawUnitTest
         var cert = "40D237D0A995DFEAE0590F99552D3F6F";
         var user = "4ucmqplxb029";
         var amount = 1m;
-        var ts_code = "1683106362";
+        var ts_code = "W1714538006874574800";
         var extension1 = "cardp101";
 
         var parameters = new Dictionary<string, string>
@@ -28,13 +29,16 @@ public class WithdrawUnitTest
             { "extension1",extension1}
         };
 
-        var content = "{\"status\":\"1\"}";
+        var response = new JsonObject
+        {
+            ["status"] = "1"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/withdraw")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -43,16 +47,16 @@ public class WithdrawUnitTest
             fakeLog,
             fakeHttpClient);
 
-        await client
-            .WithdrawAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                extension1: extension1,
-                user: user,
-                ts_code: ts_code,
-                amount: amount)
-            .ConfigureAwait(false);
+        var actual = await client.WithdrawAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            extension1: extension1,
+            user: user,
+            ts_code: ts_code,
+            amount: amount);
+
+        Assert.Equal(response.ToJsonString(), actual.Resp);
     }
 
     [Fact]
@@ -63,7 +67,7 @@ public class WithdrawUnitTest
         var cert = "40D237D0A995DFEAE0590F99552D3F6F";
         var user = "4ucmqplxb029";
         var amount = 1m;
-        var ts_code = "1683106362";
+        var ts_code = "W1714538006874574800";
         var extension1 = "cardp101";
 
         var parameters = new Dictionary<string, string>
@@ -76,13 +80,16 @@ public class WithdrawUnitTest
             { "extension1",extension1}
         };
 
-        var content = "{\"status\":\"1032\"}";
+        var response = new JsonObject
+        {
+            ["status"] = "1032"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/withdraw")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -91,8 +98,8 @@ public class WithdrawUnitTest
             fakeLog,
             fakeHttpClient);
 
-        _ = await Assert.ThrowsAsync<GameInterfaceException>(() => client
-            .WithdrawAsync(
+        _ = await Assert.ThrowsAsync<GameInterfaceException>(
+            () => client.WithdrawAsync(
                 apiUrl: apiUrl,
                 website: website,
                 cert: cert,

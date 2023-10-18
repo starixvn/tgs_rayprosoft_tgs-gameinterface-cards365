@@ -1,12 +1,14 @@
-﻿using Tgs.GameInterface.Cards365.Core.Models;
+﻿using Tgs.GameInterface.Cards365.Core.ApplicationServices;
+using Tgs.GameInterface.Cards365.Core.Models;
 
 namespace Tgs.GameInterface.Cards365.Core;
 
-internal class GameRecordUtensil : IGameRecordUtensil
+internal class GameWagerUtensil : IGameWagerUtensil
 {
-    public GameRecordInfo TransactionConvertGameRecord(TransactionInfo source)
+    public GameWagerResult TransactionConvertGameWager(TransactionInfo source)
         => new(
-            ExternalRoundId: source.TxId,
+            ExternalRoundId: source.GameNumber,
+            ExternalWagerId: source.TxId,
             ExternalGameId: source.GameId.ToString(),
             PlayerCode: source.UserId,
             IsClosed: !source.Status.Equals("Bet", StringComparison.OrdinalIgnoreCase),

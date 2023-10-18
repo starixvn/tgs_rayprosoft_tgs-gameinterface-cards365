@@ -1,5 +1,6 @@
 ﻿using NSubstitute;
 using Tgs.GameInterface.Cards365.Core.ApplicationServices;
+using Tgs.GameInterface.Cards365.Core.Models;
 
 namespace Tgs.GameInterface.Cards365.Core.UnitTest.ApplicationServices;
 
@@ -8,7 +9,6 @@ public class FundInGetServiceUnitTest
     [Fact]
     public async Task Normal_Process()
     {
-        var fakeTransactionUtensil = Substitute.For<ITransactionUtensil>();
         var fakeGameApiClient = Substitute.For<IGameApiClient>();
 
         var query = new FundInQuery(
@@ -17,52 +17,27 @@ public class FundInGetServiceUnitTest
             Cert: "40D237D0A995DFEAE0590F99552D3F6F",
             Extension1: "cardp101",
             PlayerCode: "4ucmqplxb029",
-            TransactionId: "9595e0fe83fe44819839bd07931738c9",
+            TransactionId: "W1714538006874574800",
             Amount: 1);
 
-        var ts_code = "_uCVlf6DgUSYOb0Hkxc4yQ";
-        _ = fakeTransactionUtensil
-            .TransactionIdConvertBase64(
-                Arg.Is(query.TransactionId))
-            .Returns(ts_code);
+        var withdrawResp = new WithdrawResp(Resp: "{\"status\":\"1\"}");
+        _ = fakeGameApiClient.WithdrawAsync(
+            apiUrl: Arg.Is(query.ApiUrl),
+            website: Arg.Is(query.Website),
+            cert: Arg.Is(query.Cert),
+            extension1: Arg.Is(query.Extension1),
+            user: Arg.Is(query.PlayerCode),
+            ts_code: Arg.Is(query.TransactionId.ToString()),
+            amount: Arg.Is(query.Amount),
+            cancellationToken: Arg.Any<CancellationToken>())
+            .Returns(withdrawResp);
 
-        var client = new FundInGetService(
-            fakeTransactionUtensil,
-            fakeGameApiClient);
+        var service = new FundInGetService(fakeGameApiClient);
 
-        var actual = await client
-            .GetAsync(
-               query)
-           .ConfigureAwait(false);
+        var actual = await service.GetAsync(query);
 
         Assert.NotNull(actual);
         Assert.Equal(query.TransactionId, actual.TransactionId);
-        Assert.Equal(ts_code, actual.TsCode);
-
-        await fakeGameApiClient
-            .Received(1)
-            .WithdrawAsync(
-                apiUrl: Arg.Is(query.ApiUrl),
-                website: Arg.Is(query.Website),
-                cert: Arg.Is(query.Cert),
-                extension1: Arg.Is(query.Extension1),
-                user: Arg.Is(query.PlayerCode),
-                ts_code: Arg.Is(ts_code.ToString()),
-                amount: Arg.Is(query.Amount),
-                cancellationToken: Arg.Any<CancellationToken>())
-            .ConfigureAwait(false);
-
-        await fakeGameApiClient
-            .Received(0)
-            .DepositAsync(
-                apiUrl: Arg.Is(query.ApiUrl),
-                website: Arg.Is(query.Website),
-                cert: Arg.Is(query.Cert),
-                extension1: Arg.Is(query.Extension1),
-                user: Arg.Is(query.PlayerCode),
-                ts_code: Arg.Is(ts_code.ToString()),
-                amount: Arg.Is(query.Amount),
-                cancellationToken: Arg.Any<CancellationToken>())
-            .ConfigureAwait(false);
+        Assert.Equal(withdrawResp.Resp, actual.Resp);
     }
 }

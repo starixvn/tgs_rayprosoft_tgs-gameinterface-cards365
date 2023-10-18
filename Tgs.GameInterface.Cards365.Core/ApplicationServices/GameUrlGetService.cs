@@ -14,16 +14,15 @@ internal class GameUrlGetService : IGetService<GameUrlQuery, string>
 
     public async ValueTask<string> GetAsync(GameUrlQuery query, CancellationToken cancellationToken = default)
     {
-        var key = await _client
-            .GetKeyAsync(
-                apiUrl: query.ApiUrl,
-                website: query.Website,
-                cert: query.Cert,
-                extension1: query.Extension1,
-                user: query.PlayerCode,
-                userName: query.PlayerCode,
-                currency: query.Currency,
-                cancellationToken: cancellationToken)
+        var key = await _client.GetKeyAsync(
+            apiUrl: query.ApiUrl,
+            website: query.Website,
+            cert: query.Cert,
+            extension1: query.Extension1,
+            user: query.PlayerCode,
+            userName: query.PlayerCode,
+            currency: query.Currency,
+            cancellationToken: cancellationToken)
             .ConfigureAwait(false);
 
         var url = new Uri(query.ApiUrl, $"/api/{query.Website}/loginV2");

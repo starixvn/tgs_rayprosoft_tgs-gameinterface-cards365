@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging.Abstractions;
 using RichardSzalay.MockHttp;
 using Tgs.GameInterface.Cards365.Core.Models;
@@ -25,17 +25,17 @@ public class GetTransactionsByLastUpdateDateUnitTest
             { "lastupdatedate",lastupdatedate.ToString()}
         };
 
-        var content = JsonSerializer.Serialize(new
+        var response = new JsonObject
         {
-            status = "1003",
-            desc = "no data"
-        });
+            ["status"] = "1003",
+            ["desc"] = "no data"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getTransactionsByLastUpdateDate")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -44,15 +44,13 @@ public class GetTransactionsByLastUpdateDateUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetTransactionsByLastUpdateDateAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                extension1: extension1,
-                lastupdatedate: lastupdatedate)
+        var actual = await client.GetTransactionsByLastUpdateDateAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            extension1: extension1,
+            lastupdatedate: lastupdatedate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<TransactionInfo>();
 
         Assert.NotNull(actual);
@@ -76,45 +74,46 @@ public class GetTransactionsByLastUpdateDateUnitTest
             { "lastupdatedate",lastupdatedate.ToString()}
         };
 
-        var content = JsonSerializer.Serialize(new
+        var response = new JsonObject
         {
-            status = "1",
-            count = 1,
-            transactions = new[] {
-               new {
-                    txId="6e91c688ea4011ed853f5254002237ea",
-                    gameNumber= "549-1683179782-585257-1-36",
-                    userId= "4ucmqplxb029",
-                    extension1= "cardp101",
-                    status= "Bet",
-                    tiles= null as object,
-                    gameId= 549,
-                    chair= 0,
-                    playId= 1,
-                    commission= 0.0,
-                    banker= 0,
-                    profit= 0.0,
-                    validbet=0.0,
-                    bonus= 0.0,
-                    reward= 0.0,
-                    outMoney= 0.0,
-                    currency= "CNY",
-                    updateTime="05/04/2023 13:56:44.962",
-                    createTime="05/04/2023 13:56:44.962",
-                    betTransTime= "05/04/2023 13:56:44.886",
-                    payTransTime="",
-                    betAmount=175.73,
-                    realBetAmount= 0.0,
-                    payAmount=0.0,
-                    realPayAmount= 0.0 }
+            ["status"] = "1",
+            ["count"] = 1,
+            ["transactions"] = new JsonArray {
+                new JsonObject{
+                    ["txId"] ="6e91c688ea4011ed853f5254002237ea",
+                    ["gameNumber"] = "549-1683179782-585257-1-36",
+                    ["userId"] = "4ucmqplxb029",
+                    ["extension1"] = "cardp101",
+                    ["status"] = "Bet",
+                    ["tiles"] = null,
+                    ["gameId"] = 549,
+                    ["chair"] = 0,
+                    ["playId"] = 1,
+                    ["commission"] = 0.0,
+                    ["banker"] = 0,
+                    ["profit"] = 0.0,
+                    ["validbet"] = 0.0,
+                    ["bonus"] = 0.0,
+                    ["reward"] = 0.0,
+                    ["outMoney"] = 0.0,
+                    ["currency"] = "CNY",
+                    ["updateTime"] ="05/04/2023 13:56:44.962",
+                    ["createTime"] ="05/04/2023 13:56:44.962",
+                    ["betTransTime"] = "05/04/2023 13:56:44.886",
+                    ["payTransTime"] ="",
+                    ["betAmount"] =175.73,
+                    ["realBetAmount"] = 0.0,
+                    ["payAmount"] = 0.0,
+                    ["realPayAmount"] = 0.0
+                }
             }
-        });
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getTransactionsByLastUpdateDate")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -123,15 +122,13 @@ public class GetTransactionsByLastUpdateDateUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetTransactionsByLastUpdateDateAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                extension1: extension1,
-                lastupdatedate: lastupdatedate)
+        var actual = await client.GetTransactionsByLastUpdateDateAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            extension1: extension1,
+            lastupdatedate: lastupdatedate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<TransactionInfo>();
 
         Assert.NotNull(actual);
@@ -164,45 +161,46 @@ public class GetTransactionsByLastUpdateDateUnitTest
             { "lastupdatedate",lastupdatedate.ToString()}
         };
 
-        var content = JsonSerializer.Serialize(new
+        var response = new JsonObject
         {
-            status = "1",
-            count = 1,
-            transactions = new[] {
-               new {
-                    txId="cf18a594ea4011ed853f5254002237ea",
-                    gameNumber= "549-1683179956-585257-1-39",
-                    userId= "4ucmqplxb029",
-                    extension1= "cardp101",
-                    status= "Pay",
-                    tiles= "{x=[d5, c13, d10], z=[b4, c7, a10]}",
-                    gameId= 549,
-                    chair= 0,
-                    playId= 1,
-                    commission= 0.15,
-                    banker= 1,
-                    profit= -0.15,
-                    validbet=0.15,
-                    bonus= 0.0,
-                    reward= 0.0,
-                    outMoney= 0.0,
-                    currency= "CNY",
-                    updateTime="05/04/2023 13:59:46.445",
-                    createTime="05/04/2023 13:59:24.362",
-                    betTransTime=  "05/04/2023 13:59:24.288",
-                    payTransTime= "05/04/2023 13:59:46.327",
-                    betAmount=189.31,
-                    realBetAmount= 0.0,
-                    payAmount=189.16,
-                    realPayAmount= 0.0 }
+            ["status"] = "1",
+            ["count"] = 1,
+            ["transactions"] = new JsonArray {
+                new JsonObject{
+                    ["txId"] ="cf18a594ea4011ed853f5254002237ea",
+                    ["gameNumber"] = "549-1683179956-585257-1-39",
+                    ["userId"] = "4ucmqplxb029",
+                    ["extension1"] = "cardp101",
+                    ["status"] = "Pay",
+                    ["tiles"] = "{x=[d5, c13, d10], z=[b4, c7, a10]}",
+                    ["gameId"] = 549,
+                    ["chair"] = 0,
+                    ["playId"] = 1,
+                    ["commission"] = 0.15,
+                    ["banker"] = 1,
+                    ["profit"] = -0.15,
+                    ["validbet"] = 0.15,
+                    ["bonus"] = 0.0,
+                    ["reward"] = 0.0,
+                    ["outMoney"] = 0.0,
+                    ["currency"] = "CNY",
+                    ["updateTime"] = "05/04/2023 13:59:46.445",
+                    ["createTime"] = "05/04/2023 13:59:24.362",
+                    ["betTransTime"] = "05/04/2023 13:59:24.288",
+                    ["payTransTime"] = "05/04/2023 13:59:46.327",
+                    ["betAmount"] = 189.31,
+                    ["realBetAmount"] = 0.0,
+                    ["payAmount"] = 189.16,
+                    ["realPayAmount"] = 0.0
+                }
             }
-        });
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getTransactionsByLastUpdateDate")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -211,15 +209,13 @@ public class GetTransactionsByLastUpdateDateUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetTransactionsByLastUpdateDateAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                extension1: extension1,
-                lastupdatedate: lastupdatedate)
+        var actual = await client.GetTransactionsByLastUpdateDateAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            extension1: extension1,
+            lastupdatedate: lastupdatedate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<TransactionInfo>();
 
         Assert.NotNull(actual);
@@ -252,45 +248,46 @@ public class GetTransactionsByLastUpdateDateUnitTest
             { "lastupdatedate",lastupdatedate.ToString()}
         };
 
-        var content = JsonSerializer.Serialize(new
+        var response = new JsonObject
         {
-            status = "1",
-            count = 1,
-            transactions = new[] {
-               new {
-                    txId="87032f02ea3d11ed853f5254002237ea",
-                    gameNumber= "549-1683178547-585257-1-60",
-                    userId= "4ucmqplxb029",
-                    extension1= "cardp101",
-                    status= "Pay",
-                    tiles= "{x=[c11, d10, b12], z=[c1, b5]}",
-                    gameId= 549,
-                    chair= 0,
-                    playId= 1,
-                    commission= 0.0m,
-                    banker= 0,
-                    profit= -33.0,
-                    validbet= 33.0,
-                    bonus= 0.0,
-                    reward= 0.0,
-                    outMoney= 0.0,
-                    currency= "CNY",
-                    updateTime= "05/04/2023 13:36:16.185",
-                    createTime= "05/04/2023 13:35:54.963",
-                    betTransTime= "05/04/2023 13:35:54.886",
-                    payTransTime="05/04/2023 13:36:16.092",
-                    betAmount= 108.73,
-                    realBetAmount= 33.0,
-                    payAmount=75.73,
-                    realPayAmount= 0.0 }
+            ["status"] = "1",
+            ["count"] = 1,
+            ["transactions"] = new JsonArray {
+                new JsonObject{
+                    ["txId"] ="87032f02ea3d11ed853f5254002237ea",
+                    ["gameNumber"] = "549-1683178547-585257-1-60",
+                    ["userId"] = "4ucmqplxb029",
+                    ["extension1"] = "cardp101",
+                    ["status"] = "Pay",
+                    ["tiles"] = "{x=[c11, d10, b12], z=[c1, b5]}",
+                    ["gameId"] = 549,
+                    ["chair"] = 0,
+                    ["playId"] = 1,
+                    ["commission"] = 0.0,
+                    ["banker"] = 1,
+                    ["profit"] = -33.0,
+                    ["validbet"] = 33.0,
+                    ["bonus"] = 0.0,
+                    ["reward"] = 0.0,
+                    ["outMoney"] = 0.0,
+                    ["currency"] = "CNY",
+                    ["updateTime"] = "05/04/2023 13:36:16.185",
+                    ["createTime"] = "05/04/2023 13:35:54.963",
+                    ["betTransTime"] = "05/04/2023 13:35:54.886",
+                    ["payTransTime"] = "05/04/2023 13:36:16.092",
+                    ["betAmount"] = 108.73,
+                    ["realBetAmount"] = 33.0,
+                    ["payAmount"] = 75.73,
+                    ["realPayAmount"] = 0.0
+                }
             }
-        });
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getTransactionsByLastUpdateDate")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -299,15 +296,13 @@ public class GetTransactionsByLastUpdateDateUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetTransactionsByLastUpdateDateAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                extension1: extension1,
-                lastupdatedate: lastupdatedate)
+        var actual = await client.GetTransactionsByLastUpdateDateAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            extension1: extension1,
+            lastupdatedate: lastupdatedate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<TransactionInfo>();
 
         Assert.NotNull(actual);
@@ -340,45 +335,46 @@ public class GetTransactionsByLastUpdateDateUnitTest
             { "lastupdatedate",lastupdatedate.ToString()}
         };
 
-        var content = JsonSerializer.Serialize(new
+        var response = new JsonObject
         {
-            status = "1",
-            count = 1,
-            transactions = new[] {
-               new {
-                    txId="0cede24cea1b11ed853f5254002237ea",
-                    gameNumber= "549-1683163727-585257-1-11",
-                    userId= "4ucmqplxb029",
-                    extension1= "cardp101",
-                    status= "Pay",
-                    tiles= "{x=[c11, d5, c11], z=[c7, d4, b12]}",
-                    gameId= 549,
-                    chair= 0,
-                    playId= 1,
-                    commission= 0.15,
-                    banker= 1,
-                    profit= 4.85,
-                    validbet= 4.85,
-                    bonus= 0.0,
-                    reward= 0.0,
-                    outMoney= 0.0,
-                    currency= "CNY",
-                    updateTime= "05/04/2023 09:29:31.476",
-                    createTime= "05/04/2023 09:29:09.777",
-                    betTransTime= "05/04/2023 09:29:09.699",
-                    payTransTime="05/04/2023 09:29:31.358",
-                    betAmount= 100.0,
-                    realBetAmount= 5.0,
-                    payAmount=104.85,
-                    realPayAmount= 5.0 }
+            ["status"] = "1",
+            ["count"] = 1,
+            ["transactions"] = new JsonArray {
+                new JsonObject{
+                    ["txId"] = "0cede24cea1b11ed853f5254002237ea",
+                    ["gameNumber"] = "549-1683163727-585257-1-11",
+                    ["userId"] = "4ucmqplxb029",
+                    ["extension1"] = "cardp101",
+                    ["status"] = "Pay",
+                    ["tiles"] = "{x=[c11, d5, c11], z=[c7, d4, b12]}",
+                    ["gameId"] = 549,
+                    ["chair"] = 0,
+                    ["playId"] = 1,
+                    ["commission"] = 0.15,
+                    ["banker"] = 1,
+                    ["profit"] = 4.85,
+                    ["validbet"] = 4.85,
+                    ["bonus"] = 0.0,
+                    ["reward"] = 0.0,
+                    ["outMoney"] = 0.0,
+                    ["currency"] = "CNY",
+                    ["updateTime"] = "05/04/2023 09:29:31.476",
+                    ["createTime"] = "05/04/2023 09:29:09.777",
+                    ["betTransTime"] = "05/04/2023 09:29:09.699",
+                    ["payTransTime"] = "05/04/2023 09:29:31.358",
+                    ["betAmount"] = 100.0,
+                    ["realBetAmount"] = 5.0,
+                    ["payAmount"] = 104.85,
+                    ["realPayAmount"] = 5.0
+                }
             }
-        });
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getTransactionsByLastUpdateDate")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -387,15 +383,13 @@ public class GetTransactionsByLastUpdateDateUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetTransactionsByLastUpdateDateAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                extension1: extension1,
-                lastupdatedate: lastupdatedate)
+        var actual = await client.GetTransactionsByLastUpdateDateAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            extension1: extension1,
+            lastupdatedate: lastupdatedate)
             .ToArrayAsync()
-            .ConfigureAwait(false)
             ?? Enumerable.Empty<TransactionInfo>();
 
         Assert.NotNull(actual);

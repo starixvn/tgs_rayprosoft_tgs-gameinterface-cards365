@@ -1,6 +1,6 @@
 ﻿namespace Tgs.GameInterface.Cards365.ViewModels;
 
-public record GameRecordByBetTimeViewModel(
+public record GameWagerByPayTimeViewModel(
     Uri ApiUrl,
     string Website,
     string Cert,

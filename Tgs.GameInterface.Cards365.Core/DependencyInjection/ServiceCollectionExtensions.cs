@@ -13,6 +13,5 @@ public static class ServiceCollectionExtensions
         .RegisterAllServiceUtilityTypes(
             Assembly.GetExecutingAssembly(),
             ServiceLifetime.Transient)
-        .AddSingleton<ITransactionUtensil, TransactionUtensil>()
-        .AddSingleton<IGameRecordUtensil, GameRecordUtensil>();
+        .AddSingleton<IGameWagerUtensil, GameWagerUtensil>();
 }

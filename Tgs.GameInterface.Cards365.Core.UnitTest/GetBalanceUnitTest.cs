@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging.Abstractions;
 using RichardSzalay.MockHttp;
 
@@ -21,13 +22,28 @@ public class GetBalanceUnitTest
             { "users",user}
         };
 
-        var content = "{\"status\":\"1\",\"results\":[],\"count\":\"0\",\"querytime\":\"03/05/2023 17:10:52\"}";
+        var response = new JsonObject
+        {
+            ["status"] = "1",
+            ["results"] = new JsonArray
+            {
+                new JsonObject
+                {
+                    ["user"]= "4ucmqplxb029",
+                    ["extension1"]= "cardp101",
+                    ["currency"]= "3",
+                    ["balance"]= "0.0"
+                }
+            },
+            ["count"] = "1",
+            ["querytime"] = "03/05/2023 17:25:38"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getBalance")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -36,16 +52,14 @@ public class GetBalanceUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetBalanceAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                user: user)
-            .ConfigureAwait(false);
+        var actual = await client.GetBalanceAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            user: user);
 
         Assert.NotNull(actual);
-        Assert.False(actual.IsPlayerExist);
+        Assert.True(actual.IsPlayerExist);
     }
 
     [Fact]
@@ -63,13 +77,19 @@ public class GetBalanceUnitTest
             { "users",user}
         };
 
-        var content = "{\"status\":\"1\",\"results\":[{\"user\":\"4ucmqplxb029\",\"extension1\":\"cardp101\",\"currency\":\"3\",\"balance\":\"0.0\"}],\"count\":\"1\",\"querytime\":\"03/05/2023 17:25:38\"}";
+        var response = new JsonObject
+        {
+            ["status"] = "1",
+            ["results"] = new JsonArray(),
+            ["count"] = "0",
+            ["querytime"] = "03/05/2023 17:10:52"
+        };
 
         var handler = new MockHttpMessageHandler();
         _ = handler.Expect(HttpMethod.Post, $"/api/{website}/getBalance")
-                .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
-                .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync().ConfigureAwait(false))
-                .Respond(HttpStatusCode.OK, new StringContent(content));
+            .WithHeaders("Content-Type", "application/x-www-form-urlencoded")
+            .WithContent(await new FormUrlEncodedContent(parameters).ReadAsStringAsync())
+            .Respond(HttpStatusCode.OK, new StringContent(response.ToJsonString()));
 
         var fakeLog = NullLogger<GameApiClient>.Instance;
         var fakeHttpClient = handler.ToHttpClient();
@@ -78,15 +98,13 @@ public class GetBalanceUnitTest
             fakeLog,
             fakeHttpClient);
 
-        var actual = await client
-            .GetBalanceAsync(
-                apiUrl: apiUrl,
-                website: website,
-                cert: cert,
-                user: user)
-            .ConfigureAwait(false);
+        var actual = await client.GetBalanceAsync(
+            apiUrl: apiUrl,
+            website: website,
+            cert: cert,
+            user: user);
 
         Assert.NotNull(actual);
-        Assert.True(actual.IsPlayerExist);
+        Assert.False(actual.IsPlayerExist);
     }
 }
