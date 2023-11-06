@@ -97,9 +97,3 @@ affinity:
           values:
           - game-gameinterface-cards365
       topologyKey: kubernetes.io/hostname
-
-restart:
-  enabled: false
-  serviceAccount: game-gameinterface-cards365-restarter
-  annotations: {}
-  schedule: 0 0 * * *
