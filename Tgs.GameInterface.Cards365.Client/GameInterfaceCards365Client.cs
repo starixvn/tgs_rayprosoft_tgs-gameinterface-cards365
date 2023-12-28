@@ -4,15 +4,9 @@ using Tgs.GameInterface.Cards365.Protos;
 
 namespace Tgs.GameInterface.Cards365.Client;
 
-internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
+internal class GameInterfaceCards365Client(
+    GameInterfaceCards365.GameInterfaceCards365Client client) : IGameInterfaceCards365Client
 {
-    private readonly GameInterfaceCards365.GameInterfaceCards365Client _client;
-
-    public GameInterfaceCards365Client(GameInterfaceCards365.GameInterfaceCards365Client client)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
-
     public async ValueTask<string> CheckingServiceAsync(string machineName, CancellationToken cancellationToken = default)
     {
         var request = new CheckingServiceRequest
@@ -20,7 +14,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             MachineName = machineName,
         };
 
-        var reply = await _client
+        var reply = await client
             .CheckingServiceAsync(
                 request: request,
                 cancellationToken: cancellationToken)
@@ -42,7 +36,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             Amount = amount
         };
 
-        return await _client.FundInAsync(
+        return await client.FundInAsync(
             request: request,
             cancellationToken: cancellationToken)
             .ConfigureAwait(false);
@@ -61,7 +55,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             Amount = amount
         };
 
-        return await _client.FundOutAsync(
+        return await client.FundOutAsync(
             request: request,
             cancellationToken: cancellationToken)
             .ConfigureAwait(false);
@@ -77,7 +71,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             TransactionId = transactionId
         };
 
-        var reply = await _client.FundStatusAsync(
+        var reply = await client.FundStatusAsync(
             request: request,
             cancellationToken: cancellationToken)
             .ConfigureAwait(false);
@@ -98,7 +92,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             Language = language
         };
 
-        var reply = await _client
+        var reply = await client
             .GameUrlAsync(
                 request: request,
                 cancellationToken: cancellationToken)
@@ -119,7 +113,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             EndTime = endTime.ToTimestamp()
         };
 
-        var reply = await _client.GameWagerByBetTimeAsync(
+        var reply = await client.GameWagerByBetTimeAsync(
             request: request,
             cancellationToken: cancellationToken)
             .ConfigureAwait(false);
@@ -149,7 +143,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             Lastupdatedate = lastupdatedate
         };
 
-        var reply = await _client.GameWagerByLastUpdateAsync(
+        var reply = await client.GameWagerByLastUpdateAsync(
             request: request,
             cancellationToken: cancellationToken)
             .ConfigureAwait(false);
@@ -180,7 +174,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             EndTime = endTime.ToTimestamp()
         };
 
-        var reply = await _client.GameWagerByPayTimeAsync(
+        var reply = await client.GameWagerByPayTimeAsync(
             request: request,
             cancellationToken: cancellationToken)
             .ConfigureAwait(false);
@@ -209,7 +203,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             PlayerCode = playerCode
         };
 
-        return await _client
+        return await client
             .PlayerBalanceAsync(
                 request: request,
                 cancellationToken: cancellationToken)
@@ -228,7 +222,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             Currency = currency
         };
 
-        _ = await _client
+        _ = await client
             .PlayerCreateAsync(
                 request: request,
                 cancellationToken: cancellationToken)
@@ -246,7 +240,7 @@ internal class GameInterfaceCards365Client : IGameInterfaceCards365Client
             PlayerCode = playerCode
         };
 
-        _ = await _client
+        _ = await client
             .PlayerLogoutAsync(
                request: request,
                cancellationToken: cancellationToken)

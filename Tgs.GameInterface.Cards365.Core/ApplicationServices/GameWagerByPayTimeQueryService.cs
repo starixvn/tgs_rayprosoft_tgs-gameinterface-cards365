@@ -4,24 +4,15 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.Cards365.Core.ApplicationServices;
 
-internal class GameWagerByPayTimeQueryService : IQueryService<GameWagerByPayTimeQuery, GameWagerResult>
+internal class GameWagerByPayTimeQueryService(
+    IGameApiClient client,
+    IGameWagerUtensil gameWagerUtensil) : IQueryService<GameWagerByPayTimeQuery, GameWagerResult>
 {
-    private readonly IGameApiClient _client;
-    private readonly IGameWagerUtensil _gameWagerUtensil;
-
-    public GameWagerByPayTimeQueryService(
-        IGameApiClient client,
-        IGameWagerUtensil gameWagerUtensil)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-        _gameWagerUtensil = gameWagerUtensil ?? throw new ArgumentNullException(nameof(gameWagerUtensil));
-    }
-
     public async IAsyncEnumerable<GameWagerResult> QueryAsync(
         GameWagerByPayTimeQuery query,
        [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var transactions = await _client.GetTransactionsByPayTimeAsync(
+        var transactions = await client.GetTransactionsByPayTimeAsync(
             apiUrl: query.ApiUrl,
             website: query.Website,
             cert: query.Cert,
@@ -41,7 +32,7 @@ internal class GameWagerByPayTimeQueryService : IQueryService<GameWagerByPayTime
 
         foreach (var transaction in transactions)
         {
-            yield return _gameWagerUtensil.TransactionConvertGameWager(transaction);
+            yield return gameWagerUtensil.TransactionConvertGameWager(transaction);
         }
     }
 }

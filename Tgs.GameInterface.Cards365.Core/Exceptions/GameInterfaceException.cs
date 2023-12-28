@@ -1,11 +1,7 @@
 ﻿namespace Tgs.GameInterface.Cards365.Core.Exceptions;
 
-public class GameInterfaceException : Exception
+public class GameInterfaceException(string status) : Exception($"{GetMessage(status)}({status})")
 {
-    public GameInterfaceException(string status) : base($"{GetMessage(status)}({status})")
-    {
-    }
-
     private static string GetMessage(string status)
         => status switch
         {

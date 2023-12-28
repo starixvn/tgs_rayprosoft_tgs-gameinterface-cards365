@@ -9,19 +9,10 @@ using Tgs.GameInterface.Cards365.Core.Models;
 
 namespace Tgs.GameInterface.Cards365.Core;
 
-internal class GameApiClient : IGameApiClient
+internal class GameApiClient(
+    ILogger<GameApiClient> logger,
+    HttpClient client) : IGameApiClient
 {
-    private readonly HttpClient _client;
-    private readonly ILogger<GameApiClient> _logger;
-
-    public GameApiClient(
-        ILogger<GameApiClient> logger,
-        HttpClient client)
-    {
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
-
     public async ValueTask<DepositResp> DepositAsync(Uri apiUrl, string website, string cert, string extension1, string user, string ts_code, decimal amount, CancellationToken cancellationToken = default)
     {
         var parameters = new Dictionary<string, string>
@@ -100,7 +91,7 @@ internal class GameApiClient : IGameApiClient
 
         return !jsond["status"]!.GetValue<string>().Equals("1", StringComparison.OrdinalIgnoreCase)
             ? throw new GameInterfaceException(jsond["status"]!.GetValue<string>())
-            : jsond["result"]!.AsArray().Any();
+            : jsond["result"]!.AsArray().Count != 0;
     }
 
     public async IAsyncEnumerable<BalanceInfo> GetBalancesAsync(Uri apiUrl, string website, string cert, [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -195,7 +186,7 @@ internal class GameApiClient : IGameApiClient
 
         var transactions = jsond["transactions"]!.AsArray();
 
-        if (!transactions.Any())
+        if (transactions.Count == 0)
         {
             yield break;
         }
@@ -253,7 +244,7 @@ internal class GameApiClient : IGameApiClient
 
         var transactions = jsond["transactions"]!.AsArray();
 
-        if (!transactions.Any())
+        if (transactions.Count == 0)
         {
             yield break;
         }
@@ -312,7 +303,7 @@ internal class GameApiClient : IGameApiClient
 
         var transactions = jsond["transactions"]!.AsArray();
 
-        if (!transactions.Any())
+        if (transactions.Count == 0)
         {
             yield break;
         }
@@ -396,7 +387,7 @@ internal class GameApiClient : IGameApiClient
 
         var sw = Stopwatch.StartNew();
         var content = new FormUrlEncodedContent(parameters);
-        var httpResponseMessage = await _client
+        var httpResponseMessage = await client
             .PostAsync(
                 requestUri: apiUrl,
                 content: content,
@@ -426,7 +417,7 @@ internal class GameApiClient : IGameApiClient
             ExecutionTimeMs = (int)sw.ElapsedMilliseconds,
             RecordedOn = DateTimeOffset.UtcNow
         };
-        _logger.LogInformation("{apiLogEvent}", JsonSerializer.Serialize(apiLogEvent));
+        logger.LogInformation("{apiLogEvent}", JsonSerializer.Serialize(apiLogEvent));
 
         _ = httpResponseMessage.EnsureSuccessStatusCode();
 

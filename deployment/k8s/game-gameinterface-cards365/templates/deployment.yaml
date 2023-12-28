@@ -4,6 +4,8 @@ metadata:
   name: {{ include "game-gameinterface-cards365.fullname" . }}
   labels:
     {{- include "game-gameinterface-cards365.labels" . | nindent 4 }}
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -41,23 +43,23 @@ spec:
                 fieldRef:
                   fieldPath: status.hostIP
           volumeMounts:
-            - mountPath: /config/appsettings.json
+            - mountPath: /app/appsettings.Production.json
               name: appsettings
               readOnly: true
               subPath: appsettings.json
           ports:
-            - name: grpc
-              containerPort:  {{ .Values.servicegrpc.port }}
-              protocol: TCP
             - name: http
-              containerPort: 80
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+            - name: grpc
+              containerPort:  {{ .Values.service.grpc.targetPort }}
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /healthz
               port: http
             failureThreshold: 5
-            periodSeconds: 5
+            periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz

@@ -6,49 +6,22 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.Cards365.GrpcServices
 {
-    public class GameInterfaceCards365GrpcService : GameInterfaceCards365.GameInterfaceCards365Base
+    public class GameInterfaceCards365GrpcService(
+        ILogger<GameInterfaceCards365GrpcService> logger,
+        IGetService<FundInQuery, FundResult> fundInService,
+        IGetService<FundOutQuery, FundResult> fundOutService,
+        IGetService<FundStatusQuery, bool> fundStatusService,
+        IQueryService<GameWagerByBetTimeQuery, GameWagerResult> gameWagerByBetTimeService,
+        IQueryService<GameWagerByLastUpdateQuery, GameWagerResult> gameWagerByLastUpdateService,
+        IQueryService<GameWagerByPayTimeQuery, GameWagerResult> gameWagerByPayTimeService,
+        IGetService<GameUrlQuery, string> gameUrlService,
+        IGetService<PlayerBalanceQuery, PlayerBalanceResult> playerBalanceService,
+        ICommandService<PlayerCreateCommand> playerCreateService,
+        ICommandService<PlayerLogoutCommand> playerLogoutService) : GameInterfaceCards365.GameInterfaceCards365Base
     {
-        private readonly IGetService<FundInQuery, FundResult> _fundInService;
-        private readonly IGetService<FundOutQuery, FundResult> _fundOutService;
-        private readonly IGetService<FundStatusQuery, bool> _fundStatusService;
-        private readonly IGetService<GameUrlQuery, string> _gameUrlService;
-        private readonly IQueryService<GameWagerByBetTimeQuery, GameWagerResult> _gameWagerByBetTimeService;
-        private readonly IQueryService<GameWagerByLastUpdateQuery, GameWagerResult> _gameWagerByLastUpdateService;
-        private readonly IQueryService<GameWagerByPayTimeQuery, GameWagerResult> _gameWagerByPayTimeService;
-        private readonly ILogger<GameInterfaceCards365GrpcService> _logger;
-        private readonly IGetService<PlayerBalanceQuery, PlayerBalanceResult> _playerBalanceService;
-        private readonly ICommandService<PlayerCreateCommand> _playerCreateService;
-        private readonly ICommandService<PlayerLogoutCommand> _playerLogoutService;
-
-        public GameInterfaceCards365GrpcService(
-            ILogger<GameInterfaceCards365GrpcService> logger,
-            IGetService<FundInQuery, FundResult> fundInService,
-            IGetService<FundOutQuery, FundResult> fundOutService,
-            IGetService<FundStatusQuery, bool> fundStatusService,
-            IQueryService<GameWagerByBetTimeQuery, GameWagerResult> gameWagerByBetTimeService,
-            IQueryService<GameWagerByLastUpdateQuery, GameWagerResult> gameWagerByLastUpdateService,
-            IQueryService<GameWagerByPayTimeQuery, GameWagerResult> gameWagerByPayTimeService,
-            IGetService<GameUrlQuery, string> gameUrlService,
-            IGetService<PlayerBalanceQuery, PlayerBalanceResult> playerBalanceService,
-            ICommandService<PlayerCreateCommand> playerCreateService,
-            ICommandService<PlayerLogoutCommand> playerLogoutService)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _fundInService = fundInService ?? throw new ArgumentNullException(nameof(fundInService));
-            _fundOutService = fundOutService ?? throw new ArgumentNullException(nameof(fundOutService));
-            _fundStatusService = fundStatusService ?? throw new ArgumentNullException(nameof(fundStatusService));
-            _gameWagerByBetTimeService = gameWagerByBetTimeService ?? throw new ArgumentNullException(nameof(gameWagerByBetTimeService));
-            _gameWagerByLastUpdateService = gameWagerByLastUpdateService ?? throw new ArgumentNullException(nameof(gameWagerByLastUpdateService));
-            _gameWagerByPayTimeService = gameWagerByPayTimeService ?? throw new ArgumentNullException(nameof(gameWagerByPayTimeService));
-            _gameUrlService = gameUrlService ?? throw new ArgumentNullException(nameof(gameUrlService));
-            _playerBalanceService = playerBalanceService ?? throw new ArgumentNullException(nameof(playerBalanceService));
-            _playerCreateService = playerCreateService ?? throw new ArgumentNullException(nameof(playerCreateService));
-            _playerLogoutService = playerLogoutService ?? throw new ArgumentNullException(nameof(playerLogoutService));
-        }
-
         public override Task<CheckingServiceReply> CheckingService(CheckingServiceRequest request, ServerCallContext context)
         {
-            _logger.LogWarning("LogOn:{logOn} Message: Create a check connection.({machineName})", DateTime.Now.ToString("o"), request.MachineName);
+            logger.LogWarning("LogOn:{logOn} Message: Create a check connection.({machineName})", DateTime.Now.ToString("o"), request.MachineName);
 
             return Task.FromResult(new CheckingServiceReply
             {
@@ -67,7 +40,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                 TransactionId: request.TransactionId,
                 Amount: request.Amount);
 
-            var result = await _fundInService
+            var result = await fundInService
                 .GetAsync(
                     query: query,
                     cancellationToken: context.CancellationToken)
@@ -91,8 +64,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                 TransactionId: request.TransactionId,
                 Amount: request.Amount);
 
-            var result = await _fundOutService
-                .GetAsync(
+            var result = await fundOutService.GetAsync(
                     query: query,
                     cancellationToken: context.CancellationToken)
                 .ConfigureAwait(false);
@@ -112,7 +84,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                 Cert: request.Cert,
                 TransactionId: request.TransactionId);
 
-            var result = await _fundStatusService
+            var result = await fundStatusService
                 .GetAsync(
                     query: query,
                     cancellationToken: context.CancellationToken)
@@ -135,7 +107,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                 Currency: request.Currency,
                 Language: request.Language);
 
-            var result = await _gameUrlService
+            var result = await gameUrlService
                 .GetAsync(
                     query: query,
                     cancellationToken: context.CancellationToken)
@@ -157,7 +129,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                 StartTime: request.StartTime.ToDateTimeOffset(),
                 EndTime: request.EndTime.ToDateTimeOffset());
 
-            var gameWagers = await _gameWagerByBetTimeService
+            var gameWagers = await gameWagerByBetTimeService
                 .QueryAsync(
                     query: query,
                     cancellationToken: context.CancellationToken)
@@ -205,7 +177,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                 Extension1: request.Extension1,
                 Lastupdatedate: request.Lastupdatedate);
 
-            var gameWagers = await _gameWagerByLastUpdateService
+            var gameWagers = await gameWagerByLastUpdateService
                 .QueryAsync(
                     query: query,
                     cancellationToken: context.CancellationToken)
@@ -254,7 +226,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                 StartTime: request.StartTime.ToDateTimeOffset(),
                 EndTime: request.EndTime.ToDateTimeOffset());
 
-            var gameWagers = await _gameWagerByPayTimeService
+            var gameWagers = await gameWagerByPayTimeService
                 .QueryAsync(
                     query: query,
                     cancellationToken: context.CancellationToken)
@@ -301,7 +273,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                 Cert: request.Cert,
                 PlayerCode: request.PlayerCode);
 
-            var result = await _playerBalanceService
+            var result = await playerBalanceService
                 .GetAsync(
                     query: query,
                     cancellationToken: context.CancellationToken)
@@ -324,7 +296,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                 PlayerCode: request.PlayerCode,
                 Currency: request.Currency);
 
-            await _playerCreateService
+            await playerCreateService
                .ExecuteAsync(
                    command: command,
                    cancellationToken: context.CancellationToken)
@@ -345,7 +317,7 @@ namespace Tgs.GameInterface.Cards365.GrpcServices
                 Extension1: request.Extension1,
                 PlayerCode: request.PlayerCode);
 
-            await _playerLogoutService
+            await playerLogoutService
                .ExecuteAsync(
                    command: command,
                    cancellationToken: context.CancellationToken)

@@ -3,18 +3,11 @@ using Tgs.ServiceUtility;
 
 namespace Tgs.GameInterface.Cards365.Core.ApplicationServices;
 
-internal class GameUrlGetService : IGetService<GameUrlQuery, string>
+internal class GameUrlGetService(IGameApiClient client) : IGetService<GameUrlQuery, string>
 {
-    private readonly IGameApiClient _client;
-
-    public GameUrlGetService(IGameApiClient client)
-    {
-        _client = client ?? throw new ArgumentNullException(nameof(client));
-    }
-
     public async ValueTask<string> GetAsync(GameUrlQuery query, CancellationToken cancellationToken = default)
     {
-        var key = await _client.GetKeyAsync(
+        var key = await client.GetKeyAsync(
             apiUrl: query.ApiUrl,
             website: query.Website,
             cert: query.Cert,
