@@ -4,14 +4,18 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Version>0.0.9</Version>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Version>0.0.10</Version>
 		<Authors>Raypro</Authors>
-		<RootNamespace>Tgs.GameInterface.Cards365.Client</RootNamespace>
-		<PackageId>Tgs.GameInterface.Cards365.Client</PackageId>
-		<Title>Tgs.GameInterface.Cards365.Client</Title>
 		<PackageProjectUrl>https://gitlab.com/rayprosoft/tgs-gameinterface-cards365</PackageProjectUrl>
 		<RepositoryUrl>https://gitlab.com/rayprosoft/tgs-gameinterface-cards365.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
+		<RootNamespace>Tgs.GameInterface.Cards365.Client</RootNamespace>
+		<PackageId>Tgs.GameInterface.Cards365.Client</PackageId>
+		<Title>Tgs.GameInterface.Cards365.Client</Title>
+		<Description>Tgs.GameInterface.Cards365.Client</Description>
 		<PackageTags>Tgs GameInterface Cards365 Client</PackageTags>
 	</PropertyGroup>
 
