@@ -5,14 +5,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER root 
 
 RUN  apt-get update \
-  && apt-get install -y sudo \
   && apt-get install -y wget \
   && apt-get install -y dnsutils \
   && apt-get install -y mtr \
 
-RUN adduser app sudo \
-  && adduser app wget \
-  && adduser app mtr \
+RUN usermod -aG wget app
+RUN usermod -aG mtr app
 
 USER app
 WORKDIR /app
