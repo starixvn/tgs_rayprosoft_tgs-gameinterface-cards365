@@ -2,15 +2,16 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 
-USER root 
+#USER root 
 
 RUN  apt-get update \
   && apt-get install -y wget \
   && apt-get install -y dnsutils \
   && apt-get install -y mtr \
 
-RUN usermod -aG wget app
+RUN groupadd -f mtr
 RUN usermod -aG mtr app
+RUN newgrp mtr
 
 USER app
 WORKDIR /app
