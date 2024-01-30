@@ -11,7 +11,6 @@ RUN  apt-get update \
 
 RUN groupadd -f mtr
 RUN usermod -aG mtr app
-RUN newgrp mtr
 
 USER app
 WORKDIR /app
