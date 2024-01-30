@@ -4,13 +4,13 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 
 USER root 
 
-RUN  apt-get update \
-  && apt-get install -y wget \
-  && apt-get install -y dnsutils \
-  && apt-get install -y mtr \
-
-RUN groupadd -f mtr
-RUN usermod -aG mtr app
+RUN apt-get update 
+RUN apt-get install -y wget
+RUN apt-get install -y dnsutils
+RUN apt-get install -y mtr
+RUN apt-get install -y iputils-ping
+RUN groupadd -f tools
+RUN usermod -aG tools app
 
 USER app
 WORKDIR /app
