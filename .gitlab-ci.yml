@@ -81,13 +81,13 @@ push-docker-image:
     policy: pull
   script:
     #- dotnet build "Tgs.GameInterface.Cards365/Tgs.GameInterface.Cards365.csproj" -c $BuildConfiguration -t:ContainerBuild -p:DockerfileTag="$ImageName:$Tag" --no-restore
-    - docker build -t "$ImageName:$Tag" --build-arg [BUILD_CONFIGURATION]=$BuildConfiguration -f "Tgs.GameInterface.Cards365/Dockerfile" . --no-cache
-    #- dotnet publish "Tgs.GameInterface.Cards365" 
-    #   --os linux --arch x64
-    #   /t:PublishContainer
-    #   -c $BuildConfiguration
-    #   /p:ContainerRepository=$ImageName
-    #   /p:ContainerImageTag=$Tag
+    #- docker build -t "$ImageName:$Tag" --build-arg [BUILD_CONFIGURATION]=$BuildConfiguration -f "Tgs.GameInterface.Cards365/Dockerfile" . --no-cache
+    - dotnet publish "Tgs.GameInterface.Cards365" 
+       --os linux --arch x64
+       /t:PublishContainer
+       -c $BuildConfiguration
+       /p:ContainerRepository=$ImageName
+       /p:ContainerImageTag=$Tag
     - docker push $ImageName:$Tag
 
 push-k8s-template:
