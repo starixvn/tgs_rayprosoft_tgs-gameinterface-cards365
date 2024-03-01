@@ -23,7 +23,7 @@ public class WithdrawUnitTest
         {
             { "cert",cert},
             { "user",user},
-            { "withdrawtype","1"},
+            { "withdrawtype","0"},
             { "balance",amount.ToString()},
             { "ts_code",ts_code},
             { "extension1",extension1}
@@ -74,7 +74,7 @@ public class WithdrawUnitTest
         {
             { "cert",cert},
             { "user",user},
-            { "withdrawtype","1"},
+            { "withdrawtype","0"},
             { "balance",amount.ToString()},
             { "ts_code",ts_code},
             { "extension1",extension1}
