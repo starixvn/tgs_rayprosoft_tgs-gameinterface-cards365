@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Tgs.GameInterface.Cards365.Core.ApplicationServices;
 using Tgs.ServiceUtility;
-using Tgs.GameInterface.Cards365.IntegrationTest;
 
 namespace Tgs.GameInterface.Cards365.IntegrationTest;
 
