@@ -6,38 +6,38 @@ namespace Tgs.GameInterface.Cards365.Core.UnitTest.ApplicationServices;
 
 public class GameWagerByLastUpdateQueryServiceUnitTest
 {
-    [Fact]
-    public async Task Normal_Process()
-    {
-        var fakeGameApiClient = Substitute.For<IGameApiClient>();
-        var fakeGameWagerUtensil = Substitute.For<IGameWagerUtensil>();
+	[Fact]
+	public async Task Normal_Process()
+	{
+		var fakeGameApiClient = Substitute.For<IGameApiClient>();
+		var fakeGameWagerUtensil = Substitute.For<IGameWagerUtensil>();
 
-        var query = new GameWagerByLastUpdateQuery(
-            ApiUrl: new Uri("https://g5ky3i.365gaming.cc/"),
-            Website: "card365pega001",
-            Cert: "40D237D0A995DFEAE0590F99552D3F6F",
-            Extension1: "cardp101",
-            Lastupdatedate: 0);
+		var query = new GameWagerByLastUpdateQuery(
+			ApiUrl: new Uri("https://g5ky3i.365gaming.cc/"),
+			Website: "card365pega001",
+			Cert: "40D237D0A995DFEAE0590F99552D3F6F",
+			Extension1: "cardp101",
+			Lastupdatedate: 0);
 
-        var service = new GameWagerByLastUpdateQueryService(
-            fakeGameApiClient,
-            fakeGameWagerUtensil);
+		var service = new GameWagerByLastUpdateQueryService(
+			fakeGameApiClient,
+			fakeGameWagerUtensil);
 
-        _ = await service.QueryAsync(
-            query)
-           .ToArrayAsync()
-           ?? Enumerable.Empty<GameWagerResult>();
+		_ = await service.QueryAsync(
+			query)
+		   .ToArrayAsync()
+		   ?? Enumerable.Empty<GameWagerResult>();
 
-        _ = await fakeGameApiClient
-            .Received(1)
-            .GetTransactionsByLastUpdateDateAsync(
-            apiUrl: Arg.Is(query.ApiUrl),
-            website: Arg.Is(query.Website),
-            cert: Arg.Is(query.Cert),
-            extension1: Arg.Is(query.Extension1),
-            lastupdatedate: Arg.Is(query.Lastupdatedate),
-            cancellationToken: Arg.Any<CancellationToken>())
-            .ToArrayAsync()
-            ?? Enumerable.Empty<TransactionInfo>();
-    }
+		_ = await fakeGameApiClient
+			.Received(1)
+			.GetTransactionsByLastUpdateDateAsync(
+			apiUrl: Arg.Is(query.ApiUrl),
+			website: Arg.Is(query.Website),
+			cert: Arg.Is(query.Cert),
+			extension1: Arg.Is(query.Extension1),
+			lastupdatedate: Arg.Is(query.Lastupdatedate),
+			cancellationToken: Arg.Any<CancellationToken>())
+			.ToArrayAsync()
+			?? Enumerable.Empty<TransactionInfo>();
+	}
 }

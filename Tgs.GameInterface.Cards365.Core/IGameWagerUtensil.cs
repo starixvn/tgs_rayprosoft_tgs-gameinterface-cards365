@@ -5,5 +5,5 @@ namespace Tgs.GameInterface.Cards365.Core;
 
 public interface IGameWagerUtensil
 {
-    GameWagerResult TransactionConvertGameWager(TransactionInfo source);
+	GameWagerResult TransactionConvertGameWager(TransactionInfo source);
 }

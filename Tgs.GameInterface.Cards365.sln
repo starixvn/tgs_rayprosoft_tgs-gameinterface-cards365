@@ -9,7 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.GameInterface.Cards365.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.GameInterface.Cards365.Core.UnitTest", "Tgs.GameInterface.Cards365.Core.UnitTest\Tgs.GameInterface.Cards365.Core.UnitTest.csproj", "{C7EABD12-AF68-496E-97FB-AC61DD250D89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tgs.GameInterface.Cards365.Client", "Tgs.GameInterface.Cards365.Client\Tgs.GameInterface.Cards365.Client.csproj", "{285FC732-6757-4746-A86C-1B01ABFA567D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tgs.GameInterface.Cards365.Client", "Tgs.GameInterface.Cards365.Client\Tgs.GameInterface.Cards365.Client.csproj", "{285FC732-6757-4746-A86C-1B01ABFA567D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tgs.GameInterface.Cards365.IntegrationTest", "Tgs.GameInterface.Cards365.IntegrationTest\Tgs.GameInterface.Cards365.IntegrationTest.csproj", "{01D628DB-BE60-4A01-A7E7-AA0C1BB8C77C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tgs.GameInterface.Cards365.Protos", "Tgs.GameInterface.Cards365.Protos\Tgs.GameInterface.Cards365.Protos.csproj", "{F314A918-5D99-438E-BB22-F1B694D3D714}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{285FC732-6757-4746-A86C-1B01ABFA567D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{285FC732-6757-4746-A86C-1B01ABFA567D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{285FC732-6757-4746-A86C-1B01ABFA567D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01D628DB-BE60-4A01-A7E7-AA0C1BB8C77C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01D628DB-BE60-4A01-A7E7-AA0C1BB8C77C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01D628DB-BE60-4A01-A7E7-AA0C1BB8C77C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01D628DB-BE60-4A01-A7E7-AA0C1BB8C77C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F314A918-5D99-438E-BB22-F1B694D3D714}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F314A918-5D99-438E-BB22-F1B694D3D714}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F314A918-5D99-438E-BB22-F1B694D3D714}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F314A918-5D99-438E-BB22-F1B694D3D714}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

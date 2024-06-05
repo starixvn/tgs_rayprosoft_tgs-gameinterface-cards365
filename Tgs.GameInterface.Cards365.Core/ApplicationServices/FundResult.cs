@@ -1,5 +1,5 @@
 ﻿namespace Tgs.GameInterface.Cards365.Core.ApplicationServices;
 
 public record FundResult(
-    string TransactionId,
-    string Resp);
+	string TransactionId,
+	string Resp);

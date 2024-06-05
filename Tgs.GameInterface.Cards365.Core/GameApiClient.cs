@@ -29,7 +29,7 @@ internal class GameApiClient(
 		var jsond = await PostAsync(
 				apiUrl: apiUrl,
 				parameters: parameters,
-				logPrefix: "deposit",
+				logPrefix: nameof(DepositAsync),
 				cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
@@ -52,7 +52,7 @@ internal class GameApiClient(
 		var jsond = await PostAsync(
 				apiUrl: apiUrl,
 				parameters: parameters,
-				logPrefix: "getBalance",
+				logPrefix: nameof(GetBalanceAsync),
 				cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
@@ -63,7 +63,7 @@ internal class GameApiClient(
 				: throw new GameInterfaceException(jsond["status"]!.GetValue<string>());
 		}
 
-		var results = jsond["results"]!.Deserialize<IEnumerable<BalanceInfo>>() ?? Enumerable.Empty<BalanceInfo>();
+		var results = jsond["results"]!.Deserialize<IEnumerable<BalanceInfo>>() ?? [];
 
 		if (!results.Any())
 		{
@@ -88,7 +88,7 @@ internal class GameApiClient(
 		var jsond = await PostAsync(
 				apiUrl: apiUrl,
 				parameters: parameters,
-				logPrefix: "getBalanceOperationLog",
+				logPrefix: nameof(GetBalanceOperationLogAsync),
 				cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
@@ -110,7 +110,7 @@ internal class GameApiClient(
 		var jsond = await PostAsync(
 				apiUrl: apiUrl,
 				parameters: parameters,
-				logPrefix: "getBalances",
+				logPrefix: nameof(GetBalancesAsync),
 				cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
@@ -119,7 +119,7 @@ internal class GameApiClient(
 			throw new GameInterfaceException(jsond["status"]!.GetValue<string>());
 		}
 
-		var results = jsond["results"]!.Deserialize<IEnumerable<BalanceInfo>>() ?? Enumerable.Empty<BalanceInfo>();
+		var results = jsond["results"]!.Deserialize<IEnumerable<BalanceInfo>>() ?? [];
 
 		if (!results.Any())
 		{
@@ -153,7 +153,7 @@ internal class GameApiClient(
 		var jsond = await PostAsync(
 				apiUrl: apiUrl,
 				parameters: parameters,
-				logPrefix: "getKey",
+				logPrefix: nameof(GetKeyAsync),
 				cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
@@ -178,7 +178,7 @@ internal class GameApiClient(
 		var jsond = await PostAsync(
 				apiUrl: apiUrl,
 				parameters: parameters,
-				logPrefix: "getTransactionsByBetTime",
+				logPrefix: nameof(GetTransactionsByBetTimeAsync),
 				cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
@@ -238,7 +238,7 @@ internal class GameApiClient(
 		var jsond = await PostAsync(
 				apiUrl: apiUrl,
 				parameters: parameters,
-				logPrefix: "getTransactionsByLastUpdateDate",
+				logPrefix: nameof(GetTransactionsByLastUpdateDateAsync),
 				cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
@@ -299,7 +299,7 @@ internal class GameApiClient(
 		var jsond = await PostAsync(
 				apiUrl: apiUrl,
 				parameters: parameters,
-				logPrefix: "getTransactionsByPayTime",
+				logPrefix: nameof(GetTransactionsByPayTimeAsync),
 				cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
@@ -344,6 +344,30 @@ internal class GameApiClient(
 		}
 	}
 
+	public async ValueTask<bool> GetUserStatusAsync(Uri apiUrl, string website, string cert, string extension1, string user, CancellationToken cancellationToken = default)
+
+	{
+		var parameters = new Dictionary<string, string>
+		{
+			{ "cert",cert},
+			{ "user",user},
+			{ "extension1",extension1}
+		};
+
+		apiUrl = new Uri(apiUrl, $"/api/{website}/getUserStatus");
+
+		var jsond = await PostAsync(
+				apiUrl: apiUrl,
+				parameters: parameters,
+				logPrefix: nameof(GetUserStatusAsync),
+				cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
+
+		return !jsond["status"]!.ToString().Equals("1", StringComparison.OrdinalIgnoreCase)
+			? throw new GameInterfaceException(jsond["status"]!.GetValue<string>())
+			: jsond["inGame"]!.ToString().Equals("1", StringComparison.OrdinalIgnoreCase);
+	}
+
 	public async ValueTask LogoutAsync(Uri apiUrl, string website, string cert, string extension1, string user, CancellationToken cancellationToken = default)
 
 	{
@@ -359,7 +383,7 @@ internal class GameApiClient(
 		var jsond = await PostAsync(
 				apiUrl: apiUrl,
 				parameters: parameters,
-				logPrefix: "logout",
+				logPrefix: nameof(LogoutAsync),
 				cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
@@ -386,7 +410,7 @@ internal class GameApiClient(
 		var jsond = await PostAsync(
 				apiUrl: apiUrl,
 				parameters: parameters,
-				logPrefix: "withdraw",
+				logPrefix: nameof(WithdrawAsync),
 				cancellationToken: cancellationToken)
 			.ConfigureAwait(false);
 
@@ -397,8 +421,6 @@ internal class GameApiClient(
 
 	private async ValueTask<JsonNode> PostAsync(Uri apiUrl, IDictionary<string, string> parameters, string logPrefix, CancellationToken cancellationToken = default)
 	{
-		logPrefix = $"{nameof(GameApiClient)}.{logPrefix}".ToLower();
-
 		var sw = Stopwatch.StartNew();
 		var content = new FormUrlEncodedContent(parameters);
 		var httpResponseMessage = await client

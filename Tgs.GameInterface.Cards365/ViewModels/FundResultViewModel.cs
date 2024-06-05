@@ -1,5 +1,5 @@
 ﻿namespace Tgs.GameInterface.Cards365.ViewModels;
 
 public record FundResultViewModel(
-    string TransactionId,
-    string Resp);
+	string TransactionId,
+	string Resp);
