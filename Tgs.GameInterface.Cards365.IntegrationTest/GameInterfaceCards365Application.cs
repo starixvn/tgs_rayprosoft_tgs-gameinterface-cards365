@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OpenTelemetry.Exporter;
 
-namespace Tgs.GameProviders.IntegrationTest;
+namespace Tgs.GameInterface.Cards365.IntegrationTest;
 
 internal class GameInterfaceCards365Application(Action<IWebHostBuilder>? webHostConfigure = null) : WebApplicationFactory<Program>
 {
