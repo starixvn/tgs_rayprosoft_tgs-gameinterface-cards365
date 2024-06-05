@@ -4,18 +4,18 @@ namespace Tgs.GameInterface.Cards365.Core.ApplicationServices;
 
 internal class PlayerBalanceGetService(IGameApiClient client) : IGetService<PlayerBalanceQuery, PlayerBalanceResult>
 {
-    public async ValueTask<PlayerBalanceResult> GetAsync(PlayerBalanceQuery query, CancellationToken cancellationToken = default)
-    {
-        var result = await client.GetBalanceAsync(
-            apiUrl: query.ApiUrl,
-            website: query.Website,
-            cert: query.Cert,
-            user: query.PlayerCode,
-            cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
+	public async ValueTask<PlayerBalanceResult> GetAsync(PlayerBalanceQuery query, CancellationToken cancellationToken = default)
+	{
+		var result = await client.GetBalanceAsync(
+			apiUrl: query.ApiUrl,
+			website: query.Website,
+			cert: query.Cert,
+			user: query.PlayerCode,
+			cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
 
-        return new PlayerBalanceResult(
-            result.IsPlayerExist,
-            result.Balance);
-    }
+		return new PlayerBalanceResult(
+			result.IsPlayerExist,
+			result.Balance);
+	}
 }

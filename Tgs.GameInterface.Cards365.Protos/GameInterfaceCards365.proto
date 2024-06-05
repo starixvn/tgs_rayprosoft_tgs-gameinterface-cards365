@@ -5,7 +5,7 @@ import "google/protobuf/timestamp.proto";
 
 option csharp_namespace = "Tgs.GameInterface.Cards365.Protos";
 
-package gameinterfacecards365;
+package GameInterfaceCards365;
 
 // The greeting service definition.
 service GameInterfaceCards365 {
@@ -13,6 +13,7 @@ service GameInterfaceCards365 {
   rpc PlayerCreate (PlayerCreateRequest) returns (BaseReply);
   rpc PlayerBalance (PlayerBalanceRequest) returns (PlayerBalanceReply);
   rpc PlayerLogout (PlayerLogoutRequest) returns (BaseReply);
+  rpc PlayerOnline (PlayerOnlineRequest) returns (PlayerOnlineReply);
   rpc FundIn (FundRequest) returns (FundReply);
   rpc FundOut (FundRequest) returns (FundReply);
   rpc FundStatus(FundStatusRequest) returns (BaseReply);
@@ -41,6 +42,14 @@ message PlayerBalanceRequest {
 }
 
 message PlayerLogoutRequest {
+	string api_url = 1;
+	string website = 2;
+	string cert = 3;
+	string extension1 = 4;
+	string player_code = 5;
+}
+
+message PlayerOnlineRequest {
 	string api_url = 1;
 	string website = 2;
 	string cert = 3;
@@ -114,6 +123,11 @@ message PlayerBalanceReply {
 	bool is_player_exist = 1;
 	phoenix.protobuf.DecimalValue balance = 2;
 }
+
+message PlayerOnlineReply {
+	bool online  = 1;
+}
+
 
 message FundReply {
 	string transaction_id = 1;

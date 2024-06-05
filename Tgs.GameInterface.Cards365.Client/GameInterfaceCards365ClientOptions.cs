@@ -2,5 +2,5 @@
 
 public class GameInterfaceCards365ClientOptions
 {
-    public Uri BaseUrl { get; set; } = default!;
+	public Uri BaseUrl { get; set; } = default!;
 }

@@ -3,23 +3,23 @@
 namespace Tgs.GameInterface.Cards365.Core.ApplicationServices;
 
 internal class FundOutGetService(
-    IGameApiClient client) : IGetService<FundOutQuery, FundResult>
+	IGameApiClient client) : IGetService<FundOutQuery, FundResult>
 {
-    public async ValueTask<FundResult> GetAsync(FundOutQuery query, CancellationToken cancellationToken = default)
-    {
-        var resp = await client.DepositAsync(
-            apiUrl: query.ApiUrl,
-            website: query.Website,
-            cert: query.Cert,
-            extension1: query.Extension1,
-            user: query.PlayerCode,
-            ts_code: query.TransactionId.ToString(),
-            amount: query.Amount,
-            cancellationToken: cancellationToken)
-            .ConfigureAwait(false);
+	public async ValueTask<FundResult> GetAsync(FundOutQuery query, CancellationToken cancellationToken = default)
+	{
+		var resp = await client.DepositAsync(
+			apiUrl: query.ApiUrl,
+			website: query.Website,
+			cert: query.Cert,
+			extension1: query.Extension1,
+			user: query.PlayerCode,
+			ts_code: query.TransactionId.ToString(),
+			amount: query.Amount,
+			cancellationToken: cancellationToken)
+			.ConfigureAwait(false);
 
-        return new FundResult(
-            TransactionId: query.TransactionId,
-            Resp: resp.Resp);
-    }
+		return new FundResult(
+			TransactionId: query.TransactionId,
+			Resp: resp.Resp);
+	}
 }

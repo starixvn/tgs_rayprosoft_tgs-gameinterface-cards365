@@ -4,6 +4,6 @@ namespace Tgs.GameInterface.Cards365;
 
 public class DiagnosticsInterceptorOptions
 {
-    public ActivitySource InterceptorActivitySource { get; set; } =
-        new ActivitySource($"Tgs.GameInterface.Cards365.DiagnosticsInterceptor");
+	public ActivitySource InterceptorActivitySource { get; set; } =
+		new ActivitySource($"Tgs.GameInterface.Cards365.DiagnosticsInterceptor");
 }
