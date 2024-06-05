@@ -3,10 +3,11 @@ using Grpc.Net.Client;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Tgs.GameInterface.Cards365.Core.ApplicationServices;
-using Tgs.GameProviders.IntegrationTest;
 using Tgs.ServiceUtility;
+using Tgs.GameInterface.Cards365.IntegrationTest;
 
 namespace Tgs.GameInterface.Cards365.IntegrationTest;
+
 public class PlayerLogoutUnitTest
 {
 	[Fact]
